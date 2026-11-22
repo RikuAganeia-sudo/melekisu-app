@@ -88,7 +88,7 @@ export default function AdminDashboardPage() {
 
     // Fitur Live News API (Antara, CNN, CNBC)
     const [autoNewsSourceMode, setAutoNewsSourceMode] = useState<"live_api" | "dataset" | "custom">("live_api");
-    const [selectedLiveSourceId, setSelectedLiveSourceId] = useState("antara-politik");
+    const [selectedLiveSourceId, setSelectedLiveSourceId] = useState(EXTERNAL_NEWS_SOURCES[0]?.id || "cnn-nasional");
     const [liveFeedItems, setLiveFeedItems] = useState<LiveExternalNewsItem[]>([]);
     const [isLoadingLiveFeed, setIsLoadingLiveFeed] = useState(false);
     const [selectedLiveArticle, setSelectedLiveArticle] = useState<LiveExternalNewsItem | null>(null);

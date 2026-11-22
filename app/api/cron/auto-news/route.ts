@@ -26,7 +26,7 @@ export async function GET(req: Request) {
         const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY;
         const existingTitles: string[] = [];
         const existingSlugs: string[] = [];
-        const recentSources: string[] = [];
+        let dbNewsList: any[] = [];
 
         if (supabaseUrl && supabaseKey) {
             try {
@@ -38,13 +38,10 @@ export async function GET(req: Request) {
                     .limit(60);
 
                 if (dbNews) {
-                    dbNews.forEach((n, idx) => {
+                    dbNewsList = dbNews;
+                    dbNews.forEach((n) => {
                         if (n.title) existingTitles.push(n.title.toLowerCase().trim());
                         if (n.slug) existingSlugs.push(n.slug.toLowerCase().trim());
-                        // Catat 3 sumber media yang baru saja terbit agar tidak terulang berurutan
-                        if (n.source && idx < 3) {
-                            recentSources.push(n.source.toLowerCase().trim());
-                        }
                     });
                 }
             } catch (err) {
@@ -65,13 +62,33 @@ export async function GET(req: Request) {
             });
         };
 
-        // 3. Rotasi Media Cerdas: Prioritaskan media yang BELUM terbit di 3 berita terakhir
-        // Pilihan: Tempo, Republika, Sindonews, Katadata, Antara News
+        // 3. Rotasi Media Cerdas & Adil:
+        // Hitung jarak kemunculan terakhir tiap media (semakin lama tidak terbit / belum pernah terbit = prioritas paling tinggi).
+        // Antara News tidak akan diprioritaskan lagi jika media lain (CNN Indonesia, CNBC Indonesia, Tempo, Republika, Sindonews, Katadata) belum terbit.
         const prioritizedSources = [...EXTERNAL_NEWS_SOURCES].sort((a, b) => {
-            const aUsedRecently = recentSources.some(s => s.includes(a.name.toLowerCase()) || a.name.toLowerCase().includes(s));
-            const bUsedRecently = recentSources.some(s => s.includes(b.name.toLowerCase()) || b.name.toLowerCase().includes(s));
-            if (aUsedRecently && !bUsedRecently) return 1;
-            if (!aUsedRecently && bUsedRecently) return -1;
+            const aName = a.name.toLowerCase();
+            const bName = b.name.toLowerCase();
+
+            // Temukan index kemunculan terakhir di dbNews (0 = baru saja terbit, 1 = terbit sebelumnya, dst)
+            const aLastIndex = dbNewsList.findIndex((n: any) => {
+                const s = (n.source || "").toLowerCase();
+                return s.includes(aName) || aName.includes(s);
+            });
+            const bLastIndex = dbNewsList.findIndex((n: any) => {
+                const s = (n.source || "").toLowerCase();
+                return s.includes(bName) || bName.includes(s);
+            });
+
+            // Jika belum pernah terbit di 60 artikel terakhir, berikan jarak terjauh (999)
+            const aScore = aLastIndex === -1 ? 999 : aLastIndex;
+            const bScore = bLastIndex === -1 ? 999 : bLastIndex;
+
+            // Media dengan skor lebih tinggi (lebih lama / belum pernah terbit) mendapat prioritas terdepan
+            if (bScore !== aScore) {
+                return bScore - aScore;
+            }
+
+            // Jika sama (misal sama-sama belum pernah terbit), acak secara adil
             return Math.random() - 0.5;
         });
 

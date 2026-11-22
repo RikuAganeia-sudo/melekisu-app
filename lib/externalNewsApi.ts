@@ -19,12 +19,28 @@ export interface LiveExternalNewsItem {
 
 export const EXTERNAL_NEWS_SOURCES: ExternalNewsSource[] = [
     {
+        id: "cnn-nasional",
+        name: "CNN Indonesia",
+        category: "Tata Kelola Publik",
+        feedUrl: "https://www.cnnindonesia.com/nasional/rss",
+        description: "Liputan investigasi kebijakan publik, hukum, dan peristiwa nasional terkini.",
+        badgeColor: "bg-red-100 text-red-800 border-red-200"
+    },
+    {
+        id: "cnbc-news",
+        name: "CNBC Indonesia",
+        category: "Energi & Lingkungan",
+        feedUrl: "https://www.cnbcindonesia.com/news/rss",
+        description: "Transisi energi, investasi publik, industri strategis, dan kebijakan fiskal.",
+        badgeColor: "bg-blue-100 text-blue-800 border-blue-200"
+    },
+    {
         id: "tempo-nasional",
         name: "Tempo",
         category: "Tata Kelola Publik",
         feedUrl: "https://rss.tempo.co/nasional",
-        description: "Liputan investigasi kebijakan publik, tata kelola, dan regulasi nasional.",
-        badgeColor: "bg-blue-100 text-blue-800 border-blue-200"
+        description: "Jurnalisme investigasi kebijakan publik, tata kelola, dan regulasi pemerintah.",
+        badgeColor: "bg-indigo-100 text-indigo-800 border-indigo-200"
     },
     {
         id: "republika-terkini",
@@ -39,7 +55,7 @@ export const EXTERNAL_NEWS_SOURCES: ExternalNewsSource[] = [
         name: "Sindonews",
         category: "Infrastruktur Publik",
         feedUrl: "https://nasional.sindonews.com/rss",
-        description: "Perkembangan infrastruktur, dinamika hukum, dan peristiwa nasional terkini.",
+        description: "Perkembangan infrastruktur nasional, dinamika hukum, dan pelayanan publik.",
         badgeColor: "bg-amber-100 text-amber-800 border-amber-200"
     },
     {
@@ -47,7 +63,7 @@ export const EXTERNAL_NEWS_SOURCES: ExternalNewsSource[] = [
         name: "Katadata",
         category: "Energi & Lingkungan",
         feedUrl: "https://katadata.co.id/rss",
-        description: "Jurnalisme berbasis data, transisi energi, ekonomi hijau, dan industri.",
+        description: "Jurnalisme berbasis data, transisi energi hijau, dan analisis ekonomi.",
         badgeColor: "bg-teal-100 text-teal-800 border-teal-200"
     },
     {
@@ -55,7 +71,7 @@ export const EXTERNAL_NEWS_SOURCES: ExternalNewsSource[] = [
         name: "Antara News",
         category: "Pendidikan & Talenta",
         feedUrl: "https://www.antaranews.com/rss/terkini.xml",
-        description: "Kantor Berita Nasional resmi Indonesia, pembaruan isu dan berita terkini nasional.",
+        description: "Kantor Berita Nasional resmi Indonesia, pembaruan isu dan kebijakan negara.",
         badgeColor: "bg-rose-100 text-rose-800 border-rose-200"
     }
 ];
@@ -78,8 +94,9 @@ export async function fetchExternalLiveNews(sourceId?: string, limit: number = 8
     try {
         const response = await fetch(source.feedUrl, {
             headers: {
-                "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.0.0 Safari/537.36",
-                "Accept": "application/rss+xml, application/xml, text/xml, */*"
+                "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36",
+                "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8",
+                "Accept-Language": "id-ID,id;q=0.9,en-US;q=0.8,en;q=0.7",
             },
             signal: AbortSignal.timeout(6000)
         });

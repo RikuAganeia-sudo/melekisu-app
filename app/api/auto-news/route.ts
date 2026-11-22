@@ -345,7 +345,7 @@ export async function GET(req: Request) {
 
     // Jika dipanggil dengan action=feed, kembalikan daftar headline live dari website berita luar
     if (action === "feed") {
-        const sourceId = url.searchParams.get("sourceId") || "antara-politik";
+        const sourceId = url.searchParams.get("sourceId") || EXTERNAL_NEWS_SOURCES[0]?.id || "cnn-nasional";
         const items = await fetchExternalLiveNews(sourceId, 8);
         return NextResponse.json({
             success: true,
