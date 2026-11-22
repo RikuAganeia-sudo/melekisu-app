@@ -18,7 +18,10 @@ export const metadata: Metadata = {
   description:
     "Platform berita publik dan aspirasi warga Indonesia. Baca berita, sampaikan komentar konstruktif, dan pantau perkembangan isu-isu penting.",
   icons: {
-    icon: "/images/logo.png",
+    icon: [
+      { url: "/images/logo.png", media: "(prefers-color-scheme: light)" },
+      { url: "/images/logo-white.png", media: "(prefers-color-scheme: dark)" },
+    ],
     shortcut: "/images/logo.png",
     apple: "/images/logo.png",
   },

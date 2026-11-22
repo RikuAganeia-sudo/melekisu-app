@@ -61,9 +61,9 @@ export default function AdminLoginPage() {
             <header className="py-6 px-8 flex items-center justify-between border-b border-[#3D2516]">
                 <Link href="/" className="flex items-center gap-2.5">
                     <img
-                        src="/images/logo.png"
+                        src="/images/logo-white.png"
                         alt="Logo MelekIsu"
-                        className="w-8 h-8 object-contain rounded-xl"
+                        className="w-8 h-8 object-contain"
                     />
                     <div className="flex flex-col">
                         <span className="font-extrabold text-base tracking-tight text-[#FFF8F5]">

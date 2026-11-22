@@ -79,7 +79,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
             {/* Mobile Topbar */}
             <div className="lg:hidden bg-[#1E120A] text-white px-5 py-3.5 flex items-center justify-between border-b border-[#3D2516]">
                 <div className="flex items-center gap-2">
-                    <img src="/images/logo.png" alt="Logo" className="w-7 h-7 rounded-lg" />
+                    <img src="/images/logo-white.png" alt="Logo" className="w-7 h-7 object-contain" />
                     <span className="font-extrabold text-sm tracking-tight text-white">
                         Melek<span className="text-[#FDB659]">Isu</span> Admin
                     </span>
@@ -102,9 +102,9 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
                     {/* Brand */}
                     <div className="flex items-center gap-3">
                         <img
-                            src="/images/logo.png"
+                            src="/images/logo-white.png"
                             alt="Logo MelekIsu"
-                            className="w-9 h-9 object-contain rounded-xl shadow-xs"
+                            className="w-9 h-9 object-contain"
                         />
                         <div className="flex flex-col">
                             <span className="font-extrabold text-base tracking-tight text-white">
