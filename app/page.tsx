@@ -9,7 +9,7 @@ import {
   isTextViolating,
 } from "@/lib/newsService";
 import { NewsItem } from "@/data/news";
-import { getCategoryCoverImage } from "@/lib/policyDatasets";
+import { getCategoryCoverImage, POLICY_CATEGORIES } from "@/lib/policyDatasets";
 import { createClient } from "@/lib/supabase/client";
 import CategorySlider from "@/components/CategorySlider";
 import {
@@ -28,7 +28,6 @@ import {
   Search,
   X,
 } from "lucide-react";
-import { POLICY_CATEGORIES } from "@/lib/policyDatasets";
 
 function matchCategory(itemCategory: any, selected: string): boolean {
   if (selected === "Semua") return true;
@@ -42,20 +41,32 @@ function matchCategory(itemCategory: any, selected: string): boolean {
   if (cat === sel) return true;
 
   // 1. Politik & Pemerintahan
-  if ((sel.includes("politik") || sel.includes("pemerintah") || sel.includes("kelola")) &&
-      (cat.includes("politik") || cat.includes("pemerintah") || cat.includes("tata kelola") || cat.includes("kebijakan"))) {
+  if (
+    (sel.includes("politik") || sel.includes("pemerintah") || sel.includes("kelola")) &&
+    (cat.includes("politik") ||
+      cat.includes("pemerintah") ||
+      cat.includes("tata kelola") ||
+      cat.includes("kebijakan"))
+  ) {
     return true;
   }
 
   // 2. Hukum & Regulasi
-  if ((sel.includes("hukum") || sel.includes("regulasi") || sel.includes("aturan")) &&
-      (cat.includes("hukum") || cat.includes("regulasi") || cat.includes("peradilan"))) {
+  if (
+    (sel.includes("hukum") || sel.includes("regulasi") || sel.includes("aturan")) &&
+    (cat.includes("hukum") || cat.includes("regulasi") || cat.includes("peradilan"))
+  ) {
     return true;
   }
 
   // 3. Ekonomi & Bisnis
-  if ((sel.includes("ekonomi") || sel.includes("bisnis") || sel.includes("keuangan")) &&
-      (cat.includes("ekonomi") || cat.includes("bisnis") || cat.includes("keuangan") || cat.includes("fiskal"))) {
+  if (
+    (sel.includes("ekonomi") || sel.includes("bisnis") || sel.includes("keuangan")) &&
+    (cat.includes("ekonomi") ||
+      cat.includes("bisnis") ||
+      cat.includes("keuangan") ||
+      cat.includes("fiskal"))
+  ) {
     return true;
   }
 
@@ -63,32 +74,54 @@ function matchCategory(itemCategory: any, selected: string): boolean {
   if (sel.includes("pangan") && cat.includes("pangan")) return true;
 
   // 5. Infrastruktur & Transportasi
-  if ((sel.includes("infrastruktur") || sel.includes("transportasi")) &&
-      (cat.includes("infrastruktur") || cat.includes("transportasi"))) {
+  if (
+    (sel.includes("infrastruktur") || sel.includes("transportasi")) &&
+    (cat.includes("infrastruktur") || cat.includes("transportasi"))
+  ) {
     return true;
   }
 
   // 6. Energi & Lingkungan
-  if ((sel.includes("energi") || sel.includes("lingkungan") || sel.includes("iklim")) &&
-      (cat.includes("energi") || cat.includes("lingkungan") || cat.includes("iklim"))) {
+  if (
+    (sel.includes("energi") || sel.includes("lingkungan") || sel.includes("iklim")) &&
+    (cat.includes("energi") || cat.includes("lingkungan") || cat.includes("iklim"))
+  ) {
     return true;
   }
 
   // 7. Pendidikan & Riset
-  if ((sel.includes("pendidikan") || sel.includes("riset") || sel.includes("talenta") || sel.includes("sdm")) &&
-      (cat.includes("pendidikan") || cat.includes("riset") || cat.includes("talenta") || cat.includes("sdm"))) {
+  if (
+    (sel.includes("pendidikan") ||
+      sel.includes("riset") ||
+      sel.includes("talenta") ||
+      sel.includes("sdm")) &&
+    (cat.includes("pendidikan") ||
+      cat.includes("riset") ||
+      cat.includes("talenta") ||
+      cat.includes("sdm"))
+  ) {
     return true;
   }
 
   // 8. Kesehatan & Kesejahteraan
-  if ((sel.includes("kesehatan") || sel.includes("sosial") || sel.includes("sejahtera")) &&
-      (cat.includes("kesehatan") || cat.includes("sosial") || cat.includes("sejahtera"))) {
+  if (
+    (sel.includes("kesehatan") || sel.includes("sosial") || sel.includes("sejahtera")) &&
+    (cat.includes("kesehatan") || cat.includes("sosial") || cat.includes("sejahtera"))
+  ) {
     return true;
   }
 
   // 9. Internasional & Pertahanan
-  if ((sel.includes("internasional") || sel.includes("pertahanan") || sel.includes("militer") || sel.includes("global")) &&
-      (cat.includes("internasional") || cat.includes("pertahanan") || cat.includes("militer") || cat.includes("global"))) {
+  if (
+    (sel.includes("internasional") ||
+      sel.includes("pertahanan") ||
+      sel.includes("militer") ||
+      sel.includes("global")) &&
+    (cat.includes("internasional") ||
+      cat.includes("pertahanan") ||
+      cat.includes("militer") ||
+      cat.includes("global"))
+  ) {
     return true;
   }
 
@@ -439,13 +472,13 @@ export default function HomePage() {
     <div className="min-h-screen bg-[#FFF8F5] text-[#28180C] selection:bg-[#FDB659]/30">
       {/* ================= HERO PENGANTAR (GRADASI KANAN & MENYATU DENGAN NAVBAR #FFF8F5) ================= */}
       <section className="relative min-h-[78vh] w-full flex flex-col justify-between overflow-hidden bg-[#FFF8F5] border-b border-[#DEC0B3]/30">
-        {/* Foto Senja Jakarta Difokuskan & Dipudarkan ke Sisi Kanan */}
+        {/* Foto Senja Jakarta di Sisi Kanan dengan Gradasi Memudar ke Kiri */}
         <div
           className="
-            pointer-events-none absolute inset-y-0 right-0 w-full lg:w-[66%]
-            bg-cover bg-center bg-no-repeat
-            [mask-image:linear-gradient(to_right,transparent_0%,rgba(0,0,0,0.25)_22%,rgba(0,0,0,0.85)_55%,black_100%)]
-            [-webkit-mask-image:linear-gradient(to_right,transparent_0%,rgba(0,0,0,0.25)_22%,rgba(0,0,0,0.85)_55%,black_100%)]
+            pointer-events-none absolute inset-y-0 right-0 w-full sm:w-[74%] lg:w-[66%]
+            bg-cover bg-center bg-no-repeat opacity-95
+            [mask-image:linear-gradient(to_right,transparent_0%,rgba(0,0,0,0.35)_24%,rgba(0,0,0,0.85)_52%,black_100%)]
+            [-webkit-mask-image:linear-gradient(to_right,transparent_0%,rgba(0,0,0,0.35)_24%,rgba(0,0,0,0.85)_52%,black_100%)]
           "
           style={{
             backgroundImage: "url('/images/jakarta-senja.jpg')",
@@ -457,14 +490,14 @@ export default function HomePage() {
           className="pointer-events-none absolute inset-0"
           style={{
             background:
-              "linear-gradient(90deg, #FFF8F5 0%, rgba(255,248,245,0.97) 36%, rgba(255,248,245,0.68) 62%, rgba(255,248,245,0.12) 100%)",
+              "linear-gradient(90deg, #FFF8F5 0%, #FFF8F5 36%, rgba(255,248,245,0.72) 56%, rgba(255,248,245,0.18) 80%, rgba(255,248,245,0.04) 100%)",
           }}
         />
         <div
           className="pointer-events-none absolute inset-0"
           style={{
             background:
-              "linear-gradient(180deg, rgba(255,248,245,0.88) 0%, rgba(255,248,245,0.08) 28%, rgba(255,248,245,0.18) 72%, #FFF8F5 100%)",
+              "linear-gradient(180deg, rgba(255,248,245,0.92) 0%, rgba(255,248,245,0.06) 24%, rgba(255,248,245,0.14) 76%, #FFF8F5 100%)",
           }}
         />
 
@@ -826,7 +859,7 @@ export default function HomePage() {
             </h2>
             {searchKeyword && (
               <span className="text-xs bg-[#FFE3D1] text-[#9B4000] px-3 py-0.5 rounded-full font-bold inline-flex items-center gap-1.5">
-                <span>Kata kunci: "{searchKeyword}"</span>
+                <span>Kata kunci: &quot;{searchKeyword}&quot;</span>
                 <button
                   type="button"
                   onClick={() => setSearchKeyword("")}
@@ -883,80 +916,80 @@ export default function HomePage() {
         ) : (
           <section className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 items-stretch">
             {latestNews.map((article) => (
-            <article
-              key={article.id}
-              className="flex flex-col justify-between bg-white rounded-2xl overflow-hidden shadow-sm hover:shadow-md border border-[#DEC0B3]/40 transition-all duration-300 group"
-            >
-              <div>
-                <div className="relative h-48 bg-gradient-to-tr from-[#F3D4c1] to-[#FFF8F5] flex items-center justify-center text-[#9B4000] overflow-hidden">
-                  {article.image ? (
-                    <img
-                      src={article.image}
-                      alt=""
-                      referrerPolicy="no-referrer"
-                      onError={(e) => {
-                        const target = e.currentTarget;
-                        target.onerror = null;
-                        target.src = getCategoryCoverImage(
-                          getCategoryName(article)
-                        );
-                      }}
-                      className="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-                    />
-                  ) : (
-                    <FileText className="w-10 h-10 text-[#9B4000] opacity-60 group-hover:scale-110 transition-transform duration-300" />
-                  )}
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent pointer-events-none" />
-                  <div className="absolute top-3 left-3 z-10">
-                    <span className="bg-[#FDB659] text-[#724700] px-3 py-1 rounded-full text-[11px] font-bold uppercase shadow-xs">
-                      {getCategoryName(article)}
+              <article
+                key={article.id}
+                className="flex flex-col justify-between bg-white rounded-2xl overflow-hidden shadow-sm hover:shadow-md border border-[#DEC0B3]/40 transition-all duration-300 group"
+              >
+                <div>
+                  <div className="relative h-48 bg-gradient-to-tr from-[#F3D4c1] to-[#FFF8F5] flex items-center justify-center text-[#9B4000] overflow-hidden">
+                    {article.image ? (
+                      <img
+                        src={article.image}
+                        alt=""
+                        referrerPolicy="no-referrer"
+                        onError={(e) => {
+                          const target = e.currentTarget;
+                          target.onerror = null;
+                          target.src = getCategoryCoverImage(
+                            getCategoryName(article)
+                          );
+                        }}
+                        className="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                      />
+                    ) : (
+                      <FileText className="w-10 h-10 text-[#9B4000] opacity-60 group-hover:scale-110 transition-transform duration-300" />
+                    )}
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent pointer-events-none" />
+                    <div className="absolute top-3 left-3 z-10">
+                      <span className="bg-[#FDB659] text-[#724700] px-3 py-1 rounded-full text-[11px] font-bold uppercase shadow-xs">
+                        {getCategoryName(article)}
+                      </span>
+                    </div>
+                  </div>
+                  <div className="p-5 flex flex-col gap-2.5">
+                    <span className="text-[11px] font-bold text-[#8B7266] uppercase tracking-wider">
+                      {article.source}
                     </span>
+                    <h3 className="text-base font-bold text-[#28180C] group-hover:text-[#9B4000] transition-colors line-clamp-2 leading-snug">
+                      {article.title}
+                    </h3>
+                    <p className="text-xs text-[#574238] line-clamp-2 leading-relaxed">
+                      {article.excerpt}
+                    </p>
                   </div>
                 </div>
-                <div className="p-5 flex flex-col gap-2.5">
-                  <span className="text-[11px] font-bold text-[#8B7266] uppercase tracking-wider">
-                    {article.source}
-                  </span>
-                  <h3 className="text-base font-bold text-[#28180C] group-hover:text-[#9B4000] transition-colors line-clamp-2 leading-snug">
-                    {article.title}
-                  </h3>
-                  <p className="text-xs text-[#574238] line-clamp-2 leading-relaxed">
-                    {article.excerpt}
-                  </p>
-                </div>
-              </div>
-              <div className="p-5 pt-0 mt-2 flex items-center justify-between border-t border-[#DEC0B3]/20 pt-4">
-                <button
-                  type="button"
-                  onClick={() => {
-                    window.dispatchEvent(
-                      new CustomEvent("open-ai-chat", {
-                        detail: {
-                          prompt: `Bahas berita "${article.title}" dan jelaskan apa poin pentingnya bagi warga.`,
-                          slug: article.slug,
-                          article: article,
-                        },
-                      })
-                    );
-                  }}
-                  className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-[11px] font-bold bg-[#FFF1E9] text-[#9B4000] hover:bg-[#FFDDC9] border border-[#DEC0B3]/50 transition-all cursor-pointer active:scale-95 shadow-2xs"
-                  title="Tanya AI tentang berita ini"
-                >
-                  <Sparkles className="w-3 h-3 text-[#9B4000]" />
-                  <span>Tanya AI</span>
-                </button>
+                <div className="p-5 pt-0 mt-2 flex items-center justify-between border-t border-[#DEC0B3]/20 pt-4">
+                  <button
+                    type="button"
+                    onClick={() => {
+                      window.dispatchEvent(
+                        new CustomEvent("open-ai-chat", {
+                          detail: {
+                            prompt: `Bahas berita "${article.title}" dan jelaskan apa poin pentingnya bagi warga.`,
+                            slug: article.slug,
+                            article: article,
+                          },
+                        })
+                      );
+                    }}
+                    className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-[11px] font-bold bg-[#FFF1E9] text-[#9B4000] hover:bg-[#FFDDC9] border border-[#DEC0B3]/50 transition-all cursor-pointer active:scale-95 shadow-2xs"
+                    title="Tanya AI tentang berita ini"
+                  >
+                    <Sparkles className="w-3 h-3 text-[#9B4000]" />
+                    <span>Tanya AI</span>
+                  </button>
 
-                <Link
-                  href={`/berita/${article.slug}`}
-                  className="text-xs text-[#9B4000] font-bold hover:text-[#8C4A1E] flex items-center gap-1 cursor-pointer"
-                >
-                  <span>Baca Selengkapnya</span>
-                  <ArrowRight className="w-3.5 h-3.5" />
-                </Link>
-              </div>
-            </article>
-          ))}
-        </section>
+                  <Link
+                    href={`/berita/${article.slug}`}
+                    className="text-xs text-[#9B4000] font-bold hover:text-[#8C4A1E] flex items-center gap-1 cursor-pointer"
+                  >
+                    <span>Baca Selengkapnya</span>
+                    <ArrowRight className="w-3.5 h-3.5" />
+                  </Link>
+                </div>
+              </article>
+            ))}
+          </section>
         )}
       </main>
 
