@@ -1,6 +1,12 @@
 import { NextResponse } from "next/server";
 import { createClient } from "@supabase/supabase-js";
-import { POLICY_DATASETS, getCategoryCoverImage, PolicyTopicDataset } from "@/lib/policyDatasets";
+import { 
+    POLICY_DATASETS, 
+    getCategoryCoverImage, 
+    PolicyTopicDataset,
+    POLICY_CATEGORIES,
+    classifyPolicyCategory
+} from "@/lib/policyDatasets";
 import { 
     EXTERNAL_NEWS_SOURCES, 
     fetchExternalLiveNews, 
@@ -22,33 +28,6 @@ function generateSlug(title: string): string {
         .replace(/\s+/g, "-")
         .replace(/-+/g, "-")
         .slice(0, 80);
-}
-
-// Helper cerdas penentuan kategori kebijakan publik
-function classifyPolicyCategory(title: string, desc: string = "", preferred?: string): string {
-    if (preferred && preferred !== "Tata Kelola & Transparansi" && preferred !== "Kebijakan Publik") {
-        return preferred;
-    }
-    const combined = `${title} ${desc}`.toLowerCase();
-    
-    // 1. Energi & Lingkungan
-    if (combined.match(/energi|lingkungan|iklim|abrasi|pesisir|sampah|polusi|hutan|emisi|plts|surya|batu bara|tambang|bencana|banjir|konservasi|hijau|esdm|pln|bbm|pertamina/)) {
-        return "Energi & Lingkungan";
-    }
-    // 2. Ketahanan Pangan & Pertanian
-    if (combined.match(/pangan|beras|tani|pupuk|panen|pasar|ternak|sembako|konsumsi|harga|bulog|pertanian|perikanan|nelayan|devisa|inflasi|subsidi pangan|kebun|hortikultura/)) {
-        return "Ketahanan Pangan";
-    }
-    // 3. Pendidikan & Talenta
-    if (combined.match(/pendidikan|sekolah|guru|siswa|kuliah|mahasiswa|kampus|talenta|vokasi|kurikulum|akademik|pemuda|pahlawan|pelajar|beasiswa|riset|sdm/)) {
-        return "Pendidikan & Talenta";
-    }
-    // 4. Infrastruktur Publik & Transportasi
-    if (combined.match(/jalan|tol|jembatan|stasiun|kereta|bus|transit|pelabuhan|bandara|konstruksi|proyek|gedung|infrastruktur|kendaraan|mobil|motor|moda|transportasi|lrt|mrt|kcic|jalur/)) {
-        return "Infrastruktur Publik";
-    }
-    // 5. Tata Kelola Publik (Pemerintahan, Regulasi, Anggaran)
-    return "Tata Kelola Publik";
 }
 
 export async function POST(req: Request) {
@@ -147,19 +126,23 @@ Kaidah Penulisan MelekIsu:
    - Paragraf 3: Dampak nyata bagi kesejahteraan masyarakat, pelayanan publik, atau perekonomian rakyat.
    - Paragraf 4: Poin refleksi pentingnya pengawasan partisipatif warga untuk memastikan keterbukaan informasi.
    - Gunakan gaya bahasa Indonesia yang lugas, baku, dan inspiratif.
-4. KATEGORI: Wajib tentukan SATU kategori yang PALING TEPAT dan RELEVAN dari 5 kategori resmi MelekIsu berikut:
-   - "Infrastruktur Publik" (transportasi, jalan, jembatan, tol, stasiun, fasilitas fisik, mobilitas publik)
-   - "Ketahanan Pangan" (pertanian, sembako, beras, pupuk, perikanan, ekonomi pasar, subsidi pangan)
-   - "Pendidikan & Talenta" (sekolah, kurikulum, guru, beasiswa, kampus, universitas, talenta, riset)
-   - "Tata Kelola Publik" (regulasi, tata kelola, transparansi, hukum, birokrasi, pemda, anggaran daerah/nasional)
-   - "Energi & Lingkungan" (transisi energi, iklim, abrasi, polusi, emisi, plts, hutan, konservasi)
+4. KATEGORI: Wajib tentukan SATU kategori yang PALING TEPAT dan RELEVAN dari 9 kategori resmi MelekIsu berikut:
+   - "Politik & Pemerintahan" (kebijakan presiden, kabinet, parpol, pemda, dpr, birokrasi, pemilu, tata kelola)
+   - "Hukum & Regulasi" (penegakan hukum, polri, kpk, kejaksaan, pengadilan, uu, regulasi, agraria/tanah, peradilan)
+   - "Ekonomi & Bisnis" (fiskal, perbankan, investasi, pasar, bumn, umkm, pajak, apbn, devisa, inflasi, industri)
+   - "Ketahanan Pangan" (pertanian, sembako, beras, pupuk, perikanan, petani, nelayan, pangan lokal)
+   - "Infrastruktur & Transportasi" (jalan tol, transportasi massal, krl, mrt, kcic, pelabuhan, bandara, tata kota)
+   - "Energi & Lingkungan" (transisi energi, iklim, pln, bbm, amdal, polusi, limbah, kehutanan, konservasi)
+   - "Pendidikan & Riset" (sekolah, kurikulum, guru, universitas, vokasi, beasiswa, riset teknologi)
+   - "Kesehatan & Kesejahteraan" (layanan kesehatan, bpjs, rumah sakit, bansos, kemiskinan, upah, tenaga kerja)
+   - "Internasional & Pertahanan" (geopolitik, pertahanan, tni, militer, diplomasi luar negeri, perang/konflik dunia)
 5. FORMAT OUTPUT: Wajib HANYA berupa JSON murni tanpa pembungkus markdown (tanpa \`\`\`json).
 6. TANPA EMOJI: DILARANG KERAS menggunakan emoji atau simbol berlebihan (seperti 🚀, 🔥, ⚡, 🎉, ✨, dll) pada judul, ringkasan, maupun isi berita. Tulisan harus bergaya jurnalisme kebijakan yang bersih, serius, dan kredibel.
 
 Format JSON yang wajib dihasilkan:
 {
   "title": "Judul berita lengkap dan profesional",
-  "category": "Pilih salah satu dari 5 kategori resmi di atas",
+  "category": "Pilih salah satu dari 9 kategori resmi di atas",
   "source": "${topicSource}",
   "excerpt": "Ringkasan tajam 1-2 kalimat.",
   "content": "Isi lengkap artikel kebijakan dalam 3-4 paragraf yang terhubung rapi.",
@@ -217,13 +200,7 @@ Buatkan artikel lengkap siap terbit ke portal publik MelekIsu.`;
                         const finalTitle = parsed.title.trim();
                         const baseSlug = generateSlug(finalTitle);
 
-                        const standardCategories = [
-                            "Infrastruktur Publik",
-                            "Ketahanan Pangan",
-                            "Pendidikan & Talenta",
-                            "Tata Kelola Publik",
-                            "Energi & Lingkungan"
-                        ];
+                        const standardCategories = POLICY_CATEGORIES.filter(c => c !== "Semua");
                         const rawCat = (parsed.category || topicCategory || "").trim();
                         const matchedCat = standardCategories.find(c => c.toLowerCase() === rawCat.toLowerCase());
                         const resolvedCategory = matchedCat || classifyPolicyCategory(finalTitle, parsed.excerpt || parsed.content, topicCategory);

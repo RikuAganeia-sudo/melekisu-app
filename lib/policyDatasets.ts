@@ -102,13 +102,81 @@ export const POLICY_DATASETS: PolicyTopicDataset[] = [
     }
 ];
 
+export const POLICY_CATEGORIES = [
+    "Semua",
+    "Politik & Pemerintahan",
+    "Hukum & Regulasi",
+    "Ekonomi & Bisnis",
+    "Ketahanan Pangan",
+    "Infrastruktur & Transportasi",
+    "Energi & Lingkungan",
+    "Pendidikan & Riset",
+    "Kesehatan & Kesejahteraan",
+    "Internasional & Pertahanan",
+] as const;
+
 export function getCategoryCoverImage(category: string): string {
-    const lower = category.toLowerCase();
-    if (lower.includes("pangan") || lower.includes("tani")) return "/images/petani.jpg";
-    if (lower.includes("infrastruktur") || lower.includes("transportasi")) return "/images/infrastruktur.jpg";
-    if (lower.includes("pendidikan") || lower.includes("sdm") || lower.includes("vokasi")) return "/images/guru.jpg";
-    if (lower.includes("anggaran") || lower.includes("kelola") || lower.includes("keuangan")) return "/images/rupiah.jpg";
-    if (lower.includes("energi") || lower.includes("lingkungan") || lower.includes("surya")) return "/images/plts.webp";
+    const lower = (category || "").toLowerCase();
+    if (lower.includes("pangan") || lower.includes("tani") || lower.includes("beras")) return "/images/petani.jpg";
+    if (lower.includes("infrastruktur") || lower.includes("transportasi") || lower.includes("kereta") || lower.includes("tol")) return "/images/infrastruktur.jpg";
+    if (lower.includes("pendidikan") || lower.includes("sdm") || lower.includes("riset") || lower.includes("guru") || lower.includes("sekolah")) return "/images/guru.jpg";
+    if (lower.includes("ekonomi") || lower.includes("bisnis") || lower.includes("rupiah") || lower.includes("anggaran") || lower.includes("keuangan") || lower.includes("fiskal") || lower.includes("bank")) return "/images/rupiah.jpg";
+    if (lower.includes("energi") || lower.includes("lingkungan") || lower.includes("surya") || lower.includes("iklim") || lower.includes("plts") || lower.includes("limbah")) return "/images/plts.webp";
     if (lower.includes("pupuk")) return "/images/pupuk.jpg";
+    if (lower.includes("politik") || lower.includes("pemerintah") || lower.includes("hukum") || lower.includes("internasional") || lower.includes("pertahanan")) return "/images/jakarta.jpg";
     return "/images/infrastruktur.jpg";
+}
+
+export function classifyPolicyCategory(title: string, desc: string = "", preferred?: string): string {
+    // Jika preferred sudah sah sebagai kategori resmi MelekIsu, prioritaskan
+    const officialCategories = POLICY_CATEGORIES.filter(c => c !== "Semua");
+    if (preferred && officialCategories.some(c => c.toLowerCase() === preferred.toLowerCase())) {
+        const found = officialCategories.find(c => c.toLowerCase() === preferred.toLowerCase());
+        if (found) return found;
+    }
+
+    const text = `${title} ${desc}`.toLowerCase();
+
+    // 1. Internasional & Pertahanan (Geopolitik, Militer, Luar Negeri, Pertahanan)
+    if (text.match(/jet tempur|f-16|pesawat tempur|rudal|militer|tni|pertahanan|perang|geopolitik|iran|as|amerika|israel|palestina|rusia|ukraina|nato|tiongkok|china|diplomasi|kedutaan|luar negeri|pbb|internasional|senjata|konflik global/)) {
+        return "Internasional & Pertahanan";
+    }
+
+    // 2. Energi & Lingkungan
+    if (text.match(/energi|lingkungan|iklim|limbah|sungai|abrasi|pesisir|sampah|polusi|hutan|emisi|plts|surya|batu bara|tambang|bencana|banjir|konservasi|hijau|esdm|pln|bbm|pertamina|air bersih|pembangkit/)) {
+        return "Energi & Lingkungan";
+    }
+
+    // 3. Ketahanan Pangan & Pertanian
+    if (text.match(/pangan|beras|tani|petani|pupuk|panen|sembako|bulog|pertanian|perikanan|nelayan|subsidi pangan|kebun|hortikultura|gizi|konsumsi pangan|harga beras/)) {
+        return "Ketahanan Pangan";
+    }
+
+    // 4. Infrastruktur & Transportasi
+    if (text.match(/jalan|tol|jembatan|stasiun|kereta|krl|mrt|lrt|kcic|whoosh|bus|transit|pelabuhan|bandara|konstruksi|proyek strategis|infrastruktur|transportasi|perumahan|tata kota|tata ruang|fasilitas umum/)) {
+        return "Infrastruktur & Transportasi";
+    }
+
+    // 5. Hukum & Regulasi
+    if (text.match(/hukum|kpk|korupsi|polisi|polri|jaksa|kejaksaan|pengadilan|mahkamah|hakim|vonis|tersangka|pasal|undang-undang|uu|regulasi|ajb|sertifikat|agraria|tanah|bpn|pidana|perdata|ham|gugatan|sidang/)) {
+        return "Hukum & Regulasi";
+    }
+
+    // 6. Ekonomi & Bisnis
+    if (text.match(/ekonomi|atm|bank|perbankan|bi|ojk|bunga|rupiah|dolar|investasi|ihsg|saham|pasar|fiskal|apbn|apbd|pajak|bea cukai|bumn|umkm|devisa|inflasi|saldo|keuangan|pinjol|tarif|finansial/)) {
+        return "Ekonomi & Bisnis";
+    }
+
+    // 7. Pendidikan & Riset
+    if (text.match(/pendidikan|sekolah|guru|siswa|kuliah|mahasiswa|kampus|vokasi|kurikulum|akademik|beasiswa|riset|brin|universitas|dosen|belajar|sdm|talenta/)) {
+        return "Pendidikan & Riset";
+    }
+
+    // 8. Kesehatan & Kesejahteraan
+    if (text.match(/kesehatan|rumah sakit|dokter|nakes|obat|bpjs|vaksin|penyakit|pandemi|stunting|gizi buruk|bansos|kemiskinan|buruh|ketenagakerjaan|upah|umr|ump|pekerja/)) {
+        return "Kesehatan & Kesejahteraan";
+    }
+
+    // 9. Politik & Pemerintahan (Default kebijakan publik nasional)
+    return "Politik & Pemerintahan";
 }

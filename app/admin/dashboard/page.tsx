@@ -26,7 +26,7 @@ import {
 } from "lucide-react";
 import { createClient } from "@/lib/supabase/client";
 import { newsDatabase, NewsItem, NewsComment } from "@/data/news";
-import { POLICY_DATASETS, getCategoryCoverImage } from "@/lib/policyDatasets";
+import { POLICY_DATASETS, getCategoryCoverImage, POLICY_CATEGORIES } from "@/lib/policyDatasets";
 import { EXTERNAL_NEWS_SOURCES, LiveExternalNewsItem } from "@/lib/externalNewsApi";
 import {
     TransparencyAction,
@@ -68,7 +68,7 @@ export default function AdminDashboardPage() {
     // Form Tambah Berita Baru
     const [showAddModal, setShowAddModal] = useState(false);
     const [newTitle, setNewTitle] = useState("");
-    const [newCategory, setNewCategory] = useState("Infrastruktur Publik");
+    const [newCategory, setNewCategory] = useState("Politik & Pemerintahan");
     const [newSource, setNewSource] = useState("");
     const [newExcerpt, setNewExcerpt] = useState("");
     const [newContent, setNewContent] = useState("");
@@ -1166,13 +1166,13 @@ export default function AdminDashboardPage() {
                                     <select
                                         value={newCategory}
                                         onChange={(e) => setNewCategory(e.target.value)}
-                                        className="w-full px-3.5 py-2.5 rounded-xl border border-[#DEC0B3]/70 focus:border-[#9B4000] focus:outline-none bg-white"
+                                        className="w-full px-3.5 py-2.5 rounded-xl border border-[#DEC0B3]/70 focus:border-[#9B4000] focus:outline-none bg-white font-medium"
                                     >
-                                        <option value="Infrastruktur Publik">Infrastruktur Publik</option>
-                                        <option value="Ketahanan Pangan">Ketahanan Pangan</option>
-                                        <option value="Pendidikan & Talenta">Pendidikan & Talenta</option>
-                                        <option value="Tata Kelola Publik">Tata Kelola Publik</option>
-                                        <option value="Energi & Lingkungan">Energi & Lingkungan</option>
+                                        {POLICY_CATEGORIES.filter(c => c !== "Semua").map((cat) => (
+                                            <option key={cat} value={cat}>
+                                                {cat}
+                                            </option>
+                                        ))}
                                     </select>
                                 </div>
 

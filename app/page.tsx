@@ -24,7 +24,10 @@ import {
   AlertCircle,
   Bot,
   Sparkles,
+  Search,
+  X,
 } from "lucide-react";
+import { POLICY_CATEGORIES } from "@/lib/policyDatasets";
 
 function matchCategory(itemCategory: any, selected: string): boolean {
   if (selected === "Semua") return true;
@@ -36,23 +39,58 @@ function matchCategory(itemCategory: any, selected: string): boolean {
     .trim();
   const sel = selected.toLowerCase().trim();
   if (cat === sel) return true;
-  if (sel.includes("infrastruktur") && cat.includes("infrastruktur")) return true;
+
+  // 1. Politik & Pemerintahan
+  if ((sel.includes("politik") || sel.includes("pemerintah") || sel.includes("kelola")) &&
+      (cat.includes("politik") || cat.includes("pemerintah") || cat.includes("tata kelola") || cat.includes("kebijakan"))) {
+    return true;
+  }
+
+  // 2. Hukum & Regulasi
+  if ((sel.includes("hukum") || sel.includes("regulasi") || sel.includes("aturan")) &&
+      (cat.includes("hukum") || cat.includes("regulasi") || cat.includes("peradilan"))) {
+    return true;
+  }
+
+  // 3. Ekonomi & Bisnis
+  if ((sel.includes("ekonomi") || sel.includes("bisnis") || sel.includes("keuangan")) &&
+      (cat.includes("ekonomi") || cat.includes("bisnis") || cat.includes("keuangan") || cat.includes("fiskal"))) {
+    return true;
+  }
+
+  // 4. Ketahanan Pangan
   if (sel.includes("pangan") && cat.includes("pangan")) return true;
-  if (
-    (sel.includes("pendidikan") || sel.includes("talenta") || sel.includes("sdm")) &&
-    (cat.includes("pendidikan") || cat.includes("talenta") || cat.includes("sdm"))
-  )
+
+  // 5. Infrastruktur & Transportasi
+  if ((sel.includes("infrastruktur") || sel.includes("transportasi")) &&
+      (cat.includes("infrastruktur") || cat.includes("transportasi"))) {
     return true;
-  if (
-    (sel.includes("tata kelola") || sel.includes("transparansi")) &&
-    (cat.includes("tata kelola") || cat.includes("transparansi"))
-  )
+  }
+
+  // 6. Energi & Lingkungan
+  if ((sel.includes("energi") || sel.includes("lingkungan") || sel.includes("iklim")) &&
+      (cat.includes("energi") || cat.includes("lingkungan") || cat.includes("iklim"))) {
     return true;
-  if (
-    (sel.includes("energi") || sel.includes("lingkungan")) &&
-    (cat.includes("energi") || cat.includes("lingkungan"))
-  )
+  }
+
+  // 7. Pendidikan & Riset
+  if ((sel.includes("pendidikan") || sel.includes("riset") || sel.includes("talenta") || sel.includes("sdm")) &&
+      (cat.includes("pendidikan") || cat.includes("riset") || cat.includes("talenta") || cat.includes("sdm"))) {
     return true;
+  }
+
+  // 8. Kesehatan & Kesejahteraan
+  if ((sel.includes("kesehatan") || sel.includes("sosial") || sel.includes("sejahtera")) &&
+      (cat.includes("kesehatan") || cat.includes("sosial") || cat.includes("sejahtera"))) {
+    return true;
+  }
+
+  // 9. Internasional & Pertahanan
+  if ((sel.includes("internasional") || sel.includes("pertahanan") || sel.includes("militer") || sel.includes("global")) &&
+      (cat.includes("internasional") || cat.includes("pertahanan") || cat.includes("militer") || cat.includes("global"))) {
+    return true;
+  }
+
   return cat.includes(sel) || sel.includes(cat);
 }
 
@@ -127,6 +165,8 @@ export default function HomePage() {
     sentiment?: string;
   } | null>(null);
 
+  const [searchKeyword, setSearchKeyword] = useState("");
+
   // 1. Ambil seluruh berita (Supabase & fallback), diurutkan kronologis terbaru
   useEffect(() => {
     const loadNews = async () => {
@@ -147,14 +187,7 @@ export default function HomePage() {
   }, []);
 
   const availableCategories = useMemo(() => {
-    const base = [
-      "Semua",
-      "Infrastruktur Publik",
-      "Ketahanan Pangan",
-      "Pendidikan & Talenta",
-      "Tata Kelola Publik",
-      "Energi & Lingkungan",
-    ];
+    const base = [...POLICY_CATEGORIES] as string[];
     newsList.forEach((item) => {
       const cat =
         typeof item.category === "object"
@@ -168,10 +201,25 @@ export default function HomePage() {
   }, [newsList]);
 
   const filteredNews = useMemo(() => {
-    return newsList.filter((item) =>
-      matchCategory(item.category, selectedCategory)
-    );
-  }, [newsList, selectedCategory]);
+    const q = searchKeyword.toLowerCase().trim();
+    return newsList.filter((item) => {
+      const matchesCategory = matchCategory(item.category, selectedCategory);
+      if (!q) return matchesCategory;
+
+      const catName =
+        typeof item.category === "object"
+          ? (item.category as any)?.name || ""
+          : String(item.category || "");
+      const matchesSearch =
+        (item.title || "").toLowerCase().includes(q) ||
+        (item.excerpt || "").toLowerCase().includes(q) ||
+        (item.content || "").toLowerCase().includes(q) ||
+        (item.source || "").toLowerCase().includes(q) ||
+        catName.toLowerCase().includes(q);
+
+      return matchesCategory && matchesSearch;
+    });
+  }, [newsList, selectedCategory, searchKeyword]);
 
   const featuredNews = filteredNews[0] || newsList[0];
   const latestNews =
@@ -400,9 +448,9 @@ export default function HomePage() {
         <div className="absolute inset-0 bg-gradient-to-r from-[#111821]/92 via-[#19222C]/75 to-[#19222C]/40" />
         <div className="absolute inset-0 bg-gradient-to-t from-[#111821]/85 via-transparent to-[#111821]/45" />
 
-        {/* Bar Kategori di Bagian Atas Hero */}
-        <div className="relative z-10 max-w-[1360px] w-full mx-auto px-6 pt-6">
-          <div className="flex items-center gap-2 overflow-x-auto pb-2 scrollbar-none">
+        {/* Bar Kategori & Pencarian Cepat di Bagian Atas Hero */}
+        <div className="relative z-10 max-w-[1360px] w-full mx-auto px-6 pt-6 flex flex-col md:flex-row items-stretch md:items-center justify-between gap-3">
+          <div className="flex items-center gap-2 overflow-x-auto pb-2 md:pb-0 scrollbar-none flex-1">
             {availableCategories.map((cat) => (
               <button
                 key={cat}
@@ -418,6 +466,31 @@ export default function HomePage() {
                 {cat}
               </button>
             ))}
+          </div>
+
+          {/* Quick Search on Hero */}
+          <div className="relative min-w-[240px] md:max-w-xs shrink-0">
+            <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-stone-400" />
+            <input
+              type="text"
+              value={searchKeyword}
+              onChange={(e) => {
+                setSearchKeyword(e.target.value);
+                scrollToSection("sorotan-utama");
+              }}
+              placeholder="Cari berita atau isu..."
+              className="w-full pl-9 pr-8 py-1.5 text-xs bg-white/95 text-stone-900 rounded-full border border-white/20 focus:outline-none focus:ring-2 focus:ring-[#9B4000] shadow-sm backdrop-blur-xs placeholder-stone-500 font-medium"
+            />
+            {searchKeyword && (
+              <button
+                type="button"
+                onClick={() => setSearchKeyword("")}
+                className="absolute right-2.5 top-1/2 -translate-y-1/2 text-stone-400 hover:text-stone-700 p-0.5 rounded-full cursor-pointer"
+                title="Hapus pencarian"
+              >
+                <X className="w-3.5 h-3.5" />
+              </button>
+            )}
           </div>
         </div>
 
@@ -755,12 +828,25 @@ export default function HomePage() {
         )}
 
         {/* Section Heading */}
-        <div className="flex items-center justify-between pt-4 border-t border-[#DEC0B3]/40">
-          <div className="flex items-center gap-3">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between pt-4 border-t border-[#DEC0B3]/40 gap-2">
+          <div className="flex flex-wrap items-center gap-3">
             <div className="w-2.5 h-6 bg-[#9B4000] rounded-full"></div>
             <h2 className="text-xl font-extrabold text-[#28180C] tracking-tight">
               Kajian & Laporan Lapangan Terkini
             </h2>
+            {searchKeyword && (
+              <span className="text-xs bg-[#FFE3D1] text-[#9B4000] px-3 py-0.5 rounded-full font-bold inline-flex items-center gap-1.5">
+                <span>Kata kunci: "{searchKeyword}"</span>
+                <button
+                  type="button"
+                  onClick={() => setSearchKeyword("")}
+                  className="hover:text-red-700 cursor-pointer"
+                  title="Hapus kata kunci"
+                >
+                  <X className="w-3 h-3" />
+                </button>
+              </span>
+            )}
           </div>
           <span className="text-xs text-[#574238] font-medium hidden sm:inline-block">
             Diperbarui secara berkala
@@ -768,8 +854,27 @@ export default function HomePage() {
         </div>
 
         {/* Latest News Grid */}
-        <section className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 items-stretch">
-          {latestNews.map((article) => (
+        {latestNews.length === 0 ? (
+          <div className="text-center py-12 bg-white rounded-2xl border border-[#DEC0B3]/40 p-6 flex flex-col items-center gap-2">
+            <Search className="w-8 h-8 text-[#8B7266]" />
+            <p className="text-sm font-bold text-[#28180C]">
+              {searchKeyword
+                ? `Tidak ada berita yang cocok dengan kata kunci "${searchKeyword}".`
+                : "Belum ada berita pada kategori ini."}
+            </p>
+            {searchKeyword && (
+              <button
+                type="button"
+                onClick={() => setSearchKeyword("")}
+                className="mt-2 px-3.5 py-1.5 bg-[#9B4000] text-white text-xs font-bold rounded-xl hover:bg-[#8C4A1E] cursor-pointer"
+              >
+                Reset Pencarian
+              </button>
+            )}
+          </div>
+        ) : (
+          <section className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 items-stretch">
+            {latestNews.map((article) => (
             <article
               key={article.id}
               className="flex flex-col justify-between bg-white rounded-2xl overflow-hidden shadow-sm hover:shadow-md border border-[#DEC0B3]/40 transition-all duration-300 group"
@@ -844,6 +949,7 @@ export default function HomePage() {
             </article>
           ))}
         </section>
+        )}
       </main>
 
       {/* Modal Dialog Notifikasi Pengguna */}

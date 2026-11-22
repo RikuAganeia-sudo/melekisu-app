@@ -3,28 +3,72 @@
 import { useState, useMemo, useEffect, Suspense } from "react";
 import { useSearchParams } from "next/navigation";
 import Link from "next/link";
-import { MessageSquare, ThumbsUp, ArrowRight, Send, AlertCircle, Search, FileText, CheckCircle2, Bot, Sparkles, ArrowUpDown } from "lucide-react";
+import { MessageSquare, ThumbsUp, ArrowRight, Send, AlertCircle, Search, X, FileText, CheckCircle2, Bot, Sparkles, ArrowUpDown } from "lucide-react";
 import { getCombinedNews, sendComment, getCommentsForSlug, isTextViolating, toggleCommentUpvote, getCommentUpvoteCount, isCommentUpvotedByUser } from "@/lib/newsService";
 import { NewsItem } from "@/data/news";
-import { getCategoryCoverImage } from "@/lib/policyDatasets";
+import { getCategoryCoverImage, POLICY_CATEGORIES } from "@/lib/policyDatasets";
 import { createClient } from "@/lib/supabase/client";
 
-function matchCategory(itemCategory: string, selected: string): boolean {
+function matchCategory(itemCategory: any, selected: string): boolean {
     if (selected === "Semua") return true;
     if (!itemCategory) return false;
-    const cat = itemCategory.toLowerCase().trim();
+    const cat = (typeof itemCategory === "object" ? itemCategory?.name || "" : String(itemCategory))
+        .toLowerCase()
+        .trim();
     const sel = selected.toLowerCase().trim();
     if (cat === sel) return true;
-    if (sel.includes("infrastruktur") && cat.includes("infrastruktur")) return true;
+
+    // 1. Politik & Pemerintahan
+    if ((sel.includes("politik") || sel.includes("pemerintah") || sel.includes("kelola")) &&
+        (cat.includes("politik") || cat.includes("pemerintah") || cat.includes("tata kelola") || cat.includes("kebijakan"))) {
+        return true;
+    }
+
+    // 2. Hukum & Regulasi
+    if ((sel.includes("hukum") || sel.includes("regulasi") || sel.includes("aturan")) &&
+        (cat.includes("hukum") || cat.includes("regulasi") || cat.includes("peradilan"))) {
+        return true;
+    }
+
+    // 3. Ekonomi & Bisnis
+    if ((sel.includes("ekonomi") || sel.includes("bisnis") || sel.includes("keuangan")) &&
+        (cat.includes("ekonomi") || cat.includes("bisnis") || cat.includes("keuangan") || cat.includes("fiskal"))) {
+        return true;
+    }
+
+    // 4. Ketahanan Pangan
     if (sel.includes("pangan") && cat.includes("pangan")) return true;
-    if ((sel.includes("pendidikan") || sel.includes("talenta") || sel.includes("sdm")) && 
-        (cat.includes("pendidikan") || cat.includes("talenta") || cat.includes("sdm"))) return true;
-    if ((sel.includes("tata kelola") || sel.includes("transparansi")) && 
-        (cat.includes("tata kelola") || cat.includes("transparansi"))) return true;
-    if ((sel.includes("energi") || sel.includes("lingkungan")) && 
-        (cat.includes("energi") || cat.includes("lingkungan"))) return true;
-    if ((sel.includes("digital") || sel.includes("teknologi")) && 
-        (cat.includes("digital") || cat.includes("teknologi"))) return true;
+
+    // 5. Infrastruktur & Transportasi
+    if ((sel.includes("infrastruktur") || sel.includes("transportasi")) &&
+        (cat.includes("infrastruktur") || cat.includes("transportasi"))) {
+        return true;
+    }
+
+    // 6. Energi & Lingkungan
+    if ((sel.includes("energi") || sel.includes("lingkungan") || sel.includes("iklim")) &&
+        (cat.includes("energi") || cat.includes("lingkungan") || cat.includes("iklim"))) {
+        return true;
+    }
+
+    // 7. Pendidikan & Riset
+    if ((sel.includes("pendidikan") || sel.includes("riset") || sel.includes("talenta") || sel.includes("sdm")) &&
+        (cat.includes("pendidikan") || cat.includes("riset") || cat.includes("talenta") || cat.includes("sdm"))) {
+        return true;
+    }
+
+    // 8. Kesehatan & Kesejahteraan
+    if ((sel.includes("kesehatan") || sel.includes("sosial") || sel.includes("sejahtera")) &&
+        (cat.includes("kesehatan") || cat.includes("sosial") || cat.includes("sejahtera"))) {
+        return true;
+    }
+
+    // 9. Internasional & Pertahanan
+    if ((sel.includes("internasional") || sel.includes("pertahanan") || sel.includes("militer") || sel.includes("global")) &&
+        (cat.includes("internasional") || cat.includes("pertahanan") || cat.includes("militer") || cat.includes("global"))) {
+        return true;
+    }
+
     return cat.includes(sel) || sel.includes(cat);
 }
 
@@ -167,31 +211,29 @@ function BeritaContent() {
     }, [searchQuery]);
 
     const availableCategories = useMemo(() => {
-        const base = [
-            "Semua",
-            "Infrastruktur Publik",
-            "Ketahanan Pangan",
-            "Pendidikan & Talenta",
-            "Tata Kelola Publik",
-            "Energi & Lingkungan"
-        ];
+        const base = [...POLICY_CATEGORIES] as string[];
         newsData.forEach((item) => {
-            if (item.category && !base.some((b) => matchCategory(item.category, b))) {
-                base.push(item.category);
+            const catName = typeof item.category === "object" ? (item.category as any)?.name : item.category;
+            if (catName && !base.some((b) => matchCategory(catName, b))) {
+                base.push(catName);
             }
         });
         return base;
     }, [newsData]);
 
     const filteredNews = useMemo(() => {
+        const q = keyword.toLowerCase().trim();
         const filtered = newsData.filter((item) => {
             const matchesCategory = matchCategory(item.category, selectedCategory);
+            if (!q) return matchesCategory;
 
+            const catName = typeof item.category === "object" ? (item.category as any)?.name || "" : String(item.category || "");
             const matchesSearch =
-                item.title.toLowerCase().includes(keyword.toLowerCase()) ||
-                item.excerpt.toLowerCase().includes(keyword.toLowerCase()) ||
-                item.content.toLowerCase().includes(keyword.toLowerCase()) ||
-                item.source.toLowerCase().includes(keyword.toLowerCase());
+                (item.title || "").toLowerCase().includes(q) ||
+                (item.excerpt || "").toLowerCase().includes(q) ||
+                (item.content || "").toLowerCase().includes(q) ||
+                (item.source || "").toLowerCase().includes(q) ||
+                catName.toLowerCase().includes(q);
 
             return matchesCategory && matchesSearch;
         });
@@ -362,22 +404,45 @@ function BeritaContent() {
 
     return (
         <div className="min-h-screen bg-[#FFF8F5] text-[#28180C] selection:bg-[#FDB659]/30">
-            {/* Top Navigation Category Pills Section */}
-            <section className="sticky top-20 z-40 bg-[#FFF8F5]/90 backdrop-blur-md border-b border-[#DEC0B3]/30 shadow-sm">
-                <div className="max-w-[1360px] mx-auto px-6 py-3 flex items-center justify-between">
-                    <div className="flex items-center gap-2 overflow-x-auto w-full pb-1 md:pb-0 scrollbar-none">
+            {/* Top Navigation Category Pills & Search Section */}
+            <section className="sticky top-20 z-40 bg-[#FFF8F5]/95 backdrop-blur-md border-b border-[#DEC0B3]/40 shadow-xs">
+                <div className="max-w-[1360px] mx-auto px-6 py-3 flex flex-col md:flex-row items-stretch md:items-center justify-between gap-3">
+                    {/* Category Pills */}
+                    <div className="flex items-center gap-2 overflow-x-auto w-full pb-1 md:pb-0 scrollbar-none flex-1">
                         {availableCategories.map((cat) => (
                             <button
                                 key={cat}
                                 onClick={() => setSelectedCategory(cat)}
-                                className={`px-4 py-1.5 rounded-full text-xs font-bold transition-all whitespace-nowrap shadow-sm cursor-pointer ${selectedCategory === cat
-                                        ? "bg-[#9B4000] text-white shadow-md"
-                                        : "bg-white text-[#574238] hover:bg-[#FFE3D1]"
+                                className={`px-4 py-1.5 rounded-full text-xs font-bold transition-all whitespace-nowrap shadow-xs cursor-pointer ${selectedCategory === cat
+                                        ? "bg-[#9B4000] text-white shadow-sm"
+                                        : "bg-white text-[#574238] hover:bg-[#FFE3D1] border border-[#DEC0B3]/40"
                                     }`}
                             >
                                 {cat}
                             </button>
                         ))}
+                    </div>
+
+                    {/* Integrated Search Bar on Catalog Page */}
+                    <div className="relative min-w-[240px] md:max-w-xs shrink-0">
+                        <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-[#8B7266]" />
+                        <input
+                            type="text"
+                            value={keyword}
+                            onChange={(e) => setKeyword(e.target.value)}
+                            placeholder="Cari berita atau isu..."
+                            className="w-full pl-9 pr-8 py-1.5 text-xs sm:text-sm bg-white rounded-full border border-[#DEC0B3]/80 focus:border-[#9B4000] focus:outline-none focus:ring-1 focus:ring-[#9B4000] shadow-2xs text-[#28180C] placeholder-[#8B7266]"
+                        />
+                        {keyword && (
+                            <button
+                                type="button"
+                                onClick={() => setKeyword("")}
+                                className="absolute right-2.5 top-1/2 -translate-y-1/2 text-[#8B7266] hover:text-[#9B4000] p-1 rounded-full cursor-pointer"
+                                title="Hapus pencarian"
+                            >
+                                <X className="w-3.5 h-3.5" />
+                            </button>
+                        )}
                     </div>
                 </div>
             </section>

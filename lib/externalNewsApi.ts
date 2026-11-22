@@ -1,7 +1,9 @@
+import { classifyPolicyCategory } from "@/lib/policyDatasets";
+
 export interface ExternalNewsSource {
     id: string;
     name: string;
-    category: string;
+    category?: string;
     feedUrl: string;
     description: string;
     badgeColor: string;
@@ -21,7 +23,6 @@ export const EXTERNAL_NEWS_SOURCES: ExternalNewsSource[] = [
     {
         id: "cnn-nasional",
         name: "CNN Indonesia",
-        category: "Tata Kelola Publik",
         feedUrl: "https://www.cnnindonesia.com/nasional/rss",
         description: "Liputan investigasi kebijakan publik, hukum, dan peristiwa nasional terkini.",
         badgeColor: "bg-red-100 text-red-800 border-red-200"
@@ -29,7 +30,6 @@ export const EXTERNAL_NEWS_SOURCES: ExternalNewsSource[] = [
     {
         id: "cnbc-news",
         name: "CNBC Indonesia",
-        category: "Energi & Lingkungan",
         feedUrl: "https://www.cnbcindonesia.com/news/rss",
         description: "Transisi energi, investasi publik, industri strategis, dan kebijakan fiskal.",
         badgeColor: "bg-blue-100 text-blue-800 border-blue-200"
@@ -37,7 +37,6 @@ export const EXTERNAL_NEWS_SOURCES: ExternalNewsSource[] = [
     {
         id: "tempo-nasional",
         name: "Tempo",
-        category: "Tata Kelola Publik",
         feedUrl: "https://rss.tempo.co/nasional",
         description: "Jurnalisme investigasi kebijakan publik, tata kelola, dan regulasi pemerintah.",
         badgeColor: "bg-indigo-100 text-indigo-800 border-indigo-200"
@@ -45,23 +44,20 @@ export const EXTERNAL_NEWS_SOURCES: ExternalNewsSource[] = [
     {
         id: "republika-terkini",
         name: "Republika",
-        category: "Ketahanan Pangan",
         feedUrl: "https://www.republika.co.id/rss",
-        description: "Pembaruan isu publik, perekonomian warga, dan sosial kemasyarakatan.",
+        description: "Pembaruan isu publik, peristiwa nasional, dan dinamika kemasyarakatan.",
         badgeColor: "bg-emerald-100 text-emerald-800 border-emerald-200"
     },
     {
         id: "sindonews-nasional",
         name: "Sindonews",
-        category: "Infrastruktur Publik",
         feedUrl: "https://nasional.sindonews.com/rss",
-        description: "Perkembangan infrastruktur nasional, dinamika hukum, dan pelayanan publik.",
+        description: "Perkembangan infrastruktur nasional, dinamika hukum, dan peristiwa terkini.",
         badgeColor: "bg-amber-100 text-amber-800 border-amber-200"
     },
     {
         id: "katadata-kebijakan",
         name: "Katadata",
-        category: "Energi & Lingkungan",
         feedUrl: "https://katadata.co.id/rss",
         description: "Jurnalisme berbasis data, transisi energi hijau, dan analisis ekonomi.",
         badgeColor: "bg-teal-100 text-teal-800 border-teal-200"
@@ -69,7 +65,6 @@ export const EXTERNAL_NEWS_SOURCES: ExternalNewsSource[] = [
     {
         id: "antara-terkini",
         name: "Antara News",
-        category: "Pendidikan & Talenta",
         feedUrl: "https://www.antaranews.com/rss/terkini.xml",
         description: "Kantor Berita Nasional resmi Indonesia, pembaruan isu dan kebijakan negara.",
         badgeColor: "bg-rose-100 text-rose-800 border-rose-200"
@@ -136,7 +131,7 @@ export async function fetchExternalLiveNews(sourceId?: string, limit: number = 8
                     pubDate: rawPubDate ? new Date(rawPubDate).toLocaleDateString("id-ID", { day: "numeric", month: "short", year: "numeric", hour: "2-digit", minute: "2-digit" }) : "Terbaru",
                     imageUrl: rawImg ? cleanXmlText(rawImg) : undefined,
                     sourceName: source.name,
-                    category: source.category
+                    category: classifyPolicyCategory(title, description)
                 });
             }
         }
