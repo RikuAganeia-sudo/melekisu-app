@@ -467,9 +467,9 @@ export default function HomePage() {
           }}
         />
 
-        {/* Bar Kategori & Pencarian Cepat di Bagian Atas Hero */}
-        <div className="relative z-10 max-w-[1360px] w-full mx-auto px-6 pt-6 flex flex-col md:flex-row items-stretch md:items-center justify-between gap-3">
-          <div className="flex items-center gap-2 overflow-x-auto pb-2 md:pb-0 scrollbar-none flex-1">
+        {/* Bar Kategori di Bagian Atas Hero */}
+        <div className="relative z-10 max-w-[1360px] w-full mx-auto px-6 pt-6">
+          <div className="flex items-center gap-2 overflow-x-auto pb-2 scrollbar-none">
             {availableCategories.map((cat) => (
               <button
                 key={cat}
@@ -477,7 +477,7 @@ export default function HomePage() {
                   setSelectedCategory(cat);
                   scrollToSection("sorotan-utama");
                 }}
-                className={`px-4 py-1.5 rounded-full text-xs font-bold transition-all whitespace-nowrap shadow-2xs cursor-pointer border ${selectedCategory === cat
+                className={`px-4 py-1.5 rounded-full text-xs font-bold transition-all whitespace-nowrap shadow-2xs cursor-pointer border shrink-0 ${selectedCategory === cat
                     ? "bg-[#9B4000] text-white border-[#9B4000] shadow-sm"
                     : "bg-white/85 text-[#574238] border-[#DEC0B3]/60 hover:bg-[#FFF1E9] hover:text-[#9B4000]"
                   }`}
@@ -485,31 +485,6 @@ export default function HomePage() {
                 {cat}
               </button>
             ))}
-          </div>
-
-          {/* Quick Search on Hero */}
-          <div className="relative min-w-[240px] md:max-w-xs shrink-0">
-            <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-stone-400" />
-            <input
-              type="text"
-              value={searchKeyword}
-              onChange={(e) => {
-                setSearchKeyword(e.target.value);
-                scrollToSection("sorotan-utama");
-              }}
-              placeholder="Cari berita atau isu..."
-              className="w-full pl-9 pr-8 py-1.5 text-xs bg-white/95 text-stone-900 rounded-full border border-white/20 focus:outline-none focus:ring-2 focus:ring-[#9B4000] shadow-sm backdrop-blur-xs placeholder-stone-500 font-medium"
-            />
-            {searchKeyword && (
-              <button
-                type="button"
-                onClick={() => setSearchKeyword("")}
-                className="absolute right-2.5 top-1/2 -translate-y-1/2 text-stone-400 hover:text-stone-700 p-0.5 rounded-full cursor-pointer"
-                title="Hapus pencarian"
-              >
-                <X className="w-3.5 h-3.5" />
-              </button>
-            )}
           </div>
         </div>
 
@@ -849,8 +824,8 @@ export default function HomePage() {
           </div>
         )}
 
-        {/* Section Heading */}
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between pt-4 border-t border-[#DEC0B3]/40 gap-2">
+        {/* Section Heading & Search */}
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between pt-4 border-t border-[#DEC0B3]/40 gap-3">
           <div className="flex flex-wrap items-center gap-3">
             <div className="w-2.5 h-6 bg-[#9B4000] rounded-full"></div>
             <h2 className="text-xl font-extrabold text-[#28180C] tracking-tight">
@@ -870,9 +845,27 @@ export default function HomePage() {
               </span>
             )}
           </div>
-          <span className="text-xs text-[#574238] font-medium hidden sm:inline-block">
-            Diperbarui secara berkala
-          </span>
+
+          <div className="relative w-full sm:w-72">
+            <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-[#8B7266]" />
+            <input
+              type="text"
+              value={searchKeyword}
+              onChange={(e) => setSearchKeyword(e.target.value)}
+              placeholder="Cari berita atau isu..."
+              className="w-full pl-10 pr-9 py-2 text-xs sm:text-sm bg-white rounded-2xl border border-[#DEC0B3]/80 focus:border-[#9B4000] focus:outline-none focus:ring-1 focus:ring-[#9B4000] shadow-xs text-[#28180C] placeholder-[#8B7266]"
+            />
+            {searchKeyword && (
+              <button
+                type="button"
+                onClick={() => setSearchKeyword("")}
+                className="absolute right-3 top-1/2 -translate-y-1/2 text-[#8B7266] hover:text-[#9B4000] p-1 rounded-full cursor-pointer"
+                title="Hapus pencarian"
+              >
+                <X className="w-3.5 h-3.5" />
+              </button>
+            )}
+          </div>
         </div>
 
         {/* Latest News Grid */}

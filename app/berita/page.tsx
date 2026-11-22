@@ -404,16 +404,15 @@ function BeritaContent() {
 
     return (
         <div className="min-h-screen bg-[#FFF8F5] text-[#28180C] selection:bg-[#FDB659]/30">
-            {/* Top Navigation Category Pills & Search Section */}
+            {/* Top Navigation Category Pills Section */}
             <section className="sticky top-20 z-40 bg-[#FFF8F5]/95 backdrop-blur-md border-b border-[#DEC0B3]/40 shadow-xs">
-                <div className="max-w-[1360px] mx-auto px-6 py-3 flex flex-col md:flex-row items-stretch md:items-center justify-between gap-3">
-                    {/* Category Pills */}
-                    <div className="flex items-center gap-2 overflow-x-auto w-full pb-1 md:pb-0 scrollbar-none flex-1">
+                <div className="max-w-[1360px] mx-auto px-6 py-2.5">
+                    <div className="flex items-center gap-2 overflow-x-auto w-full pb-1 scrollbar-none">
                         {availableCategories.map((cat) => (
                             <button
                                 key={cat}
                                 onClick={() => setSelectedCategory(cat)}
-                                className={`px-4 py-1.5 rounded-full text-xs font-bold transition-all whitespace-nowrap shadow-xs cursor-pointer ${selectedCategory === cat
+                                className={`px-4 py-1.5 rounded-full text-xs font-bold transition-all whitespace-nowrap shadow-xs cursor-pointer shrink-0 ${selectedCategory === cat
                                         ? "bg-[#9B4000] text-white shadow-sm"
                                         : "bg-white text-[#574238] hover:bg-[#FFE3D1] border border-[#DEC0B3]/40"
                                     }`}
@@ -422,35 +421,13 @@ function BeritaContent() {
                             </button>
                         ))}
                     </div>
-
-                    {/* Integrated Search Bar on Catalog Page */}
-                    <div className="relative min-w-[240px] md:max-w-xs shrink-0">
-                        <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-[#8B7266]" />
-                        <input
-                            type="text"
-                            value={keyword}
-                            onChange={(e) => setKeyword(e.target.value)}
-                            placeholder="Cari berita atau isu..."
-                            className="w-full pl-9 pr-8 py-1.5 text-xs sm:text-sm bg-white rounded-full border border-[#DEC0B3]/80 focus:border-[#9B4000] focus:outline-none focus:ring-1 focus:ring-[#9B4000] shadow-2xs text-[#28180C] placeholder-[#8B7266]"
-                        />
-                        {keyword && (
-                            <button
-                                type="button"
-                                onClick={() => setKeyword("")}
-                                className="absolute right-2.5 top-1/2 -translate-y-1/2 text-[#8B7266] hover:text-[#9B4000] p-1 rounded-full cursor-pointer"
-                                title="Hapus pencarian"
-                            >
-                                <X className="w-3.5 h-3.5" />
-                            </button>
-                        )}
-                    </div>
                 </div>
             </section>
 
             {/* Main Content */}
             <main className="max-w-[1360px] mx-auto px-6 py-8 flex flex-col gap-8">
-                {/* Header Title & Live Counter */}
-                <div className="flex flex-col md:flex-row md:items-end justify-between border-b border-[#DEC0B3]/30 pb-6 gap-4">
+                {/* Header Title & Live Counter Toolbar */}
+                <div className="flex flex-col lg:flex-row lg:items-end justify-between border-b border-[#DEC0B3]/30 pb-6 gap-4">
                     <div>
                         <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full text-[11px] font-bold bg-[#FFE3D1] text-[#9B4000] mb-2 uppercase tracking-wider">
                             Katalog Informasi Publik
@@ -463,9 +440,31 @@ function BeritaContent() {
                         </p>
                     </div>
 
-                    <div className="flex flex-wrap items-center gap-3">
+                    <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 w-full lg:w-auto">
+                        {/* Search Bar Berita */}
+                        <div className="relative w-full sm:w-72">
+                            <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-[#8B7266]" />
+                            <input
+                                type="text"
+                                value={keyword}
+                                onChange={(e) => setKeyword(e.target.value)}
+                                placeholder="Cari berita atau isu..."
+                                className="w-full pl-10 pr-9 py-2 text-xs sm:text-sm bg-white rounded-2xl border border-[#DEC0B3]/80 focus:border-[#9B4000] focus:outline-none focus:ring-1 focus:ring-[#9B4000] shadow-xs text-[#28180C] placeholder-[#8B7266]"
+                            />
+                            {keyword && (
+                                <button
+                                    type="button"
+                                    onClick={() => setKeyword("")}
+                                    className="absolute right-3 top-1/2 -translate-y-1/2 text-[#8B7266] hover:text-[#9B4000] p-1 rounded-full cursor-pointer"
+                                    title="Hapus pencarian"
+                                >
+                                    <X className="w-3.5 h-3.5" />
+                                </button>
+                            )}
+                        </div>
+
                         {/* Selector Pengurutan (Sorting) */}
-                        <div className="flex items-center gap-2 bg-white px-3.5 py-2 rounded-2xl border border-[#DEC0B3]/60 text-xs shadow-xs">
+                        <div className="flex items-center gap-2 bg-white px-3.5 py-2 rounded-2xl border border-[#DEC0B3]/60 text-xs shadow-xs shrink-0">
                             <ArrowUpDown className="w-3.5 h-3.5 text-[#9B4000]" />
                             <span className="text-[11px] font-bold text-[#8B7266]">Urutkan:</span>
                             <select
@@ -478,10 +477,6 @@ function BeritaContent() {
                                 <option value="diskusi">Paling Banyak Tanggapan</option>
                             </select>
                         </div>
-
-                        <span className="text-xs font-bold text-[#8B7266]">
-                            Menampilkan <strong className="text-[#9B4000]">{filteredNews.length}</strong> artikel
-                        </span>
                     </div>
                 </div>
 
