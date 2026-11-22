@@ -19,12 +19,20 @@ export interface LiveExternalNewsItem {
 
 export const EXTERNAL_NEWS_SOURCES: ExternalNewsSource[] = [
     {
+        id: "antara-terkini",
+        name: "Antara News (Terkini Nasional)",
+        category: "Tata Kelola Publik",
+        feedUrl: "https://www.antaranews.com/rss/terkini.xml",
+        description: "Kantor Berita Nasional resmi Indonesia, pembaruan isu dan berita terkini nasional.",
+        badgeColor: "bg-red-100 text-red-800 border-red-200"
+    },
+    {
         id: "antara-politik",
         name: "Antara News (Politik & Kebijakan)",
         category: "Tata Kelola Publik",
         feedUrl: "https://www.antaranews.com/rss/politik.xml",
-        description: "Kantor Berita Nasional resmi Indonesia, pembaruan kebijakan dan tata kelola pemerintah.",
-        badgeColor: "bg-red-100 text-red-800 border-red-200"
+        description: "Pembaruan kebijakan dan dinamika tata kelola pemerintahan.",
+        badgeColor: "bg-purple-100 text-purple-800 border-purple-200"
     },
     {
         id: "antara-ekonomi",
@@ -35,19 +43,19 @@ export const EXTERNAL_NEWS_SOURCES: ExternalNewsSource[] = [
         badgeColor: "bg-amber-100 text-amber-800 border-amber-200"
     },
     {
-        id: "cnn-nasional",
-        name: "CNN Indonesia (Nasional)",
+        id: "tempo-nasional",
+        name: "Tempo (Nasional & Kebijakan)",
         category: "Infrastruktur Publik",
-        feedUrl: "https://www.cnnindonesia.com/nasional/rss",
-        description: "Perkembangan isu publik, hukum, dan regulasi nasional terkini.",
+        feedUrl: "https://rss.tempo.co/nasional",
+        description: "Liputan investigasi kebijakan publik, hukum, dan regulasi nasional.",
         badgeColor: "bg-blue-100 text-blue-800 border-blue-200"
     },
     {
-        id: "cnbc-news",
-        name: "CNBC Indonesia (News & Energi)",
-        category: "Energi & Lingkungan",
-        feedUrl: "https://www.cnbcindonesia.com/news/rss",
-        description: "Transisi energi, investasi publik, dan perkembangan industri hijau.",
+        id: "antara-hukum",
+        name: "Antara News (Hukum & Regulasi)",
+        category: "Tata Kelola Publik",
+        feedUrl: "https://www.antaranews.com/rss/hukum.xml",
+        description: "Perkembangan regulasi, kepastian hukum, dan hak-hak masyarakat.",
         badgeColor: "bg-emerald-100 text-emerald-800 border-emerald-200"
     }
 ];
@@ -92,7 +100,8 @@ export async function fetchExternalLiveNews(sourceId?: string, limit: number = 6
             const rawPubDate = raw.match(/<pubDate>([\s\S]*?)<\/pubDate>/)?.[1] || "";
 
             // Deteksi enclosure gambar, media:content, tag img, atau URL gambar
-            const rawImg = raw.match(/<enclosure[^>]+url=["']([^"']+)["']/i)?.[1] 
+            const rawImg = raw.match(/<img[^>]*>([^<]+)<\/img>/i)?.[1]
+                || raw.match(/<enclosure[^>]+url=["']([^"']+)["']/i)?.[1] 
                 || raw.match(/<media:content[^>]+url=["']([^"']+)["']/i)?.[1]
                 || raw.match(/<img[^>]+src=["']([^"']+)["']/i)?.[1]
                 || raw.match(/https?:\/\/[^\s"'<>]+\.(?:jpg|jpeg|png|webp)(?:\?[^\s"'<>]*)?/i)?.[0]
