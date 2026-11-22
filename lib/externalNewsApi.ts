@@ -19,44 +19,44 @@ export interface LiveExternalNewsItem {
 
 export const EXTERNAL_NEWS_SOURCES: ExternalNewsSource[] = [
     {
-        id: "antara-terkini",
-        name: "Antara News (Terkini Nasional)",
-        category: "Tata Kelola Publik",
-        feedUrl: "https://www.antaranews.com/rss/terkini.xml",
-        description: "Kantor Berita Nasional resmi Indonesia, pembaruan isu dan berita terkini nasional.",
-        badgeColor: "bg-red-100 text-red-800 border-red-200"
-    },
-    {
-        id: "antara-politik",
-        name: "Antara News (Politik & Kebijakan)",
-        category: "Tata Kelola Publik",
-        feedUrl: "https://www.antaranews.com/rss/politik.xml",
-        description: "Pembaruan kebijakan dan dinamika tata kelola pemerintahan.",
-        badgeColor: "bg-purple-100 text-purple-800 border-purple-200"
-    },
-    {
-        id: "antara-ekonomi",
-        name: "Antara News (Ekonomi & Pangan)",
-        category: "Ketahanan Pangan",
-        feedUrl: "https://www.antaranews.com/rss/ekonomi.xml",
-        description: "Data dan perkembangan perekonomian, perbankan, dan ketahanan pangan nasional.",
-        badgeColor: "bg-amber-100 text-amber-800 border-amber-200"
-    },
-    {
         id: "tempo-nasional",
-        name: "Tempo (Nasional & Kebijakan)",
-        category: "Infrastruktur Publik",
+        name: "Tempo",
+        category: "Tata Kelola Publik",
         feedUrl: "https://rss.tempo.co/nasional",
-        description: "Liputan investigasi kebijakan publik, hukum, dan regulasi nasional.",
+        description: "Liputan investigasi kebijakan publik, tata kelola, dan regulasi nasional.",
         badgeColor: "bg-blue-100 text-blue-800 border-blue-200"
     },
     {
-        id: "antara-hukum",
-        name: "Antara News (Hukum & Regulasi)",
-        category: "Tata Kelola Publik",
-        feedUrl: "https://www.antaranews.com/rss/hukum.xml",
-        description: "Perkembangan regulasi, kepastian hukum, dan hak-hak masyarakat.",
+        id: "republika-terkini",
+        name: "Republika",
+        category: "Ketahanan Pangan",
+        feedUrl: "https://www.republika.co.id/rss",
+        description: "Pembaruan isu publik, perekonomian warga, dan sosial kemasyarakatan.",
         badgeColor: "bg-emerald-100 text-emerald-800 border-emerald-200"
+    },
+    {
+        id: "sindonews-nasional",
+        name: "Sindonews",
+        category: "Infrastruktur Publik",
+        feedUrl: "https://nasional.sindonews.com/rss",
+        description: "Perkembangan infrastruktur, dinamika hukum, dan peristiwa nasional terkini.",
+        badgeColor: "bg-amber-100 text-amber-800 border-amber-200"
+    },
+    {
+        id: "katadata-kebijakan",
+        name: "Katadata",
+        category: "Energi & Lingkungan",
+        feedUrl: "https://katadata.co.id/rss",
+        description: "Jurnalisme berbasis data, transisi energi, ekonomi hijau, dan industri.",
+        badgeColor: "bg-teal-100 text-teal-800 border-teal-200"
+    },
+    {
+        id: "antara-terkini",
+        name: "Antara News",
+        category: "Pendidikan & Talenta",
+        feedUrl: "https://www.antaranews.com/rss/terkini.xml",
+        description: "Kantor Berita Nasional resmi Indonesia, pembaruan isu dan berita terkini nasional.",
+        badgeColor: "bg-rose-100 text-rose-800 border-rose-200"
     }
 ];
 
@@ -72,13 +72,13 @@ function cleanXmlText(text: string): string {
         .trim();
 }
 
-export async function fetchExternalLiveNews(sourceId?: string, limit: number = 6): Promise<LiveExternalNewsItem[]> {
+export async function fetchExternalLiveNews(sourceId?: string, limit: number = 8): Promise<LiveExternalNewsItem[]> {
     const source = EXTERNAL_NEWS_SOURCES.find((s) => s.id === sourceId) || EXTERNAL_NEWS_SOURCES[0];
 
     try {
         const response = await fetch(source.feedUrl, {
             headers: {
-                "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 MelekIsuBot/1.0",
+                "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.0.0 Safari/537.36",
                 "Accept": "application/rss+xml, application/xml, text/xml, */*"
             },
             signal: AbortSignal.timeout(6000)

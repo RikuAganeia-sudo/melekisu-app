@@ -21,25 +21,30 @@ export async function GET(req: Request) {
             }
         }
 
-        // 2. Ambil riwayat berita yang sudah ada di Supabase untuk pencegahan duplikasi (Deduplikasi)
+        // 2. Ambil riwayat berita dan sumber media terakhir untuk rotasi yang adil dan beragam
         const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
         const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY;
         const existingTitles: string[] = [];
         const existingSlugs: string[] = [];
+        const recentSources: string[] = [];
 
         if (supabaseUrl && supabaseKey) {
             try {
                 const supabase = createClient(supabaseUrl, supabaseKey);
                 const { data: dbNews } = await supabase
                     .from("news")
-                    .select("title, slug")
+                    .select("title, slug, source")
                     .order("created_at", { ascending: false })
                     .limit(60);
 
                 if (dbNews) {
-                    dbNews.forEach((n) => {
+                    dbNews.forEach((n, idx) => {
                         if (n.title) existingTitles.push(n.title.toLowerCase().trim());
                         if (n.slug) existingSlugs.push(n.slug.toLowerCase().trim());
+                        // Catat 3 sumber media yang baru saja terbit agar tidak terulang berurutan
+                        if (n.source && idx < 3) {
+                            recentSources.push(n.source.toLowerCase().trim());
+                        }
                     });
                 }
             } catch (err) {
@@ -50,7 +55,6 @@ export async function GET(req: Request) {
         // Helper cek apakah artikel atau topiknya sudah pernah diterbitkan sebelumnya
         const isAlreadyPublished = (rawTitle: string): boolean => {
             const cleanTitle = rawTitle.toLowerCase().trim();
-            // Bersihkan tanda baca untuk perbandingan akurat
             const simplified = cleanTitle.replace(/[^a-z0-9]/g, "");
             return existingTitles.some((t) => {
                 const simplifiedTarget = t.replace(/[^a-z0-9]/g, "");
@@ -61,12 +65,20 @@ export async function GET(req: Request) {
             });
         };
 
-        // 3. Rotasi dan acak sumber berita agar topik yang diterbitkan selalu bervariasi
-        const shuffledSources = [...EXTERNAL_NEWS_SOURCES].sort(() => Math.random() - 0.5);
+        // 3. Rotasi Media Cerdas: Prioritaskan media yang BELUM terbit di 3 berita terakhir
+        // Pilihan: Tempo, Republika, Sindonews, Katadata, Antara News
+        const prioritizedSources = [...EXTERNAL_NEWS_SOURCES].sort((a, b) => {
+            const aUsedRecently = recentSources.some(s => s.includes(a.name.toLowerCase()) || a.name.toLowerCase().includes(s));
+            const bUsedRecently = recentSources.some(s => s.includes(b.name.toLowerCase()) || b.name.toLowerCase().includes(s));
+            if (aUsedRecently && !bUsedRecently) return 1;
+            if (!aUsedRecently && bUsedRecently) return -1;
+            return Math.random() - 0.5;
+        });
+
         let chosenArticle: LiveExternalNewsItem | null = null;
         let chosenSourceId: string = "";
 
-        for (const source of shuffledSources) {
+        for (const source of prioritizedSources) {
             const liveArticles = await fetchExternalLiveNews(source.id, 10);
             for (const article of liveArticles) {
                 if (!isAlreadyPublished(article.title)) {
