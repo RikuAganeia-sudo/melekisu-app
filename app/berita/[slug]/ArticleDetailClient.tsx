@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import Link from "next/link";
-import { ArrowLeft, MessageSquare, ThumbsUp, Send, AlertCircle, Building2, Calendar, Clock, CheckCircle2, HelpCircle, FileText, Bot, Sparkles } from "lucide-react";
+import { ArrowLeft, MessageSquare, ThumbsUp, Send, AlertCircle, Building2, Calendar, Clock, CheckCircle2, HelpCircle, FileText, Bot, Sparkles, Zap, Users, Search } from "lucide-react";
 import { getCombinedNews, getCommentsForSlug, sendComment, isTextViolating, toggleCommentUpvote, getCommentUpvoteCount, isCommentUpvotedByUser } from "@/lib/newsService";
 import { NewsItem, NewsComment } from "@/data/news";
 import { getCategoryCoverImage } from "@/lib/policyDatasets";
@@ -412,19 +412,22 @@ export default function ArticleDetailClient({ slug }: { slug: string }) {
                                 onClick={() => handleAskAI(`Tolong berikan ringkasan poin-poin penting dari berita "${articleData.title}"`)}
                                 className="text-xs font-semibold bg-white hover:bg-[#FFDDC9] text-[#9B4000] px-3.5 py-1.5 rounded-xl border border-[#DEC0B3]/70 shadow-2xs transition-all hover:scale-105 active:scale-95 cursor-pointer flex items-center gap-1.5"
                             >
-                                <span>⚡ Ringkas Berita</span>
+                                <Zap className="w-3.5 h-3.5 text-[#9B4000]" />
+                                <span>Ringkas Berita</span>
                             </button>
                             <button
                                 onClick={() => handleAskAI(`Apa dampak dan manfaat nyata kebijakan dalam berita "${articleData.title}" bagi masyarakat?`)}
                                 className="text-xs font-semibold bg-white hover:bg-[#FFDDC9] text-[#9B4000] px-3.5 py-1.5 rounded-xl border border-[#DEC0B3]/70 shadow-2xs transition-all hover:scale-105 active:scale-95 cursor-pointer flex items-center gap-1.5"
                             >
-                                <span>👥 Dampak bagi Warga</span>
+                                <Users className="w-3.5 h-3.5 text-[#9B4000]" />
+                                <span>Dampak bagi Warga</span>
                             </button>
                             <button
                                 onClick={() => handleAskAI(`Siapa pihak berwenang terkait dan bagaimana tindak lanjut dari artikel "${articleData.title}"?`)}
                                 className="text-xs font-semibold bg-white hover:bg-[#FFDDC9] text-[#9B4000] px-3.5 py-1.5 rounded-xl border border-[#DEC0B3]/70 shadow-2xs transition-all hover:scale-105 active:scale-95 cursor-pointer flex items-center gap-1.5"
                             >
-                                <span>🔍 Pihak Terkait & Regulasi</span>
+                                <Search className="w-3.5 h-3.5 text-[#9B4000]" />
+                                <span>Pihak Terkait & Regulasi</span>
                             </button>
                         </div>
                     </div>

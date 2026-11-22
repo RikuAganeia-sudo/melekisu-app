@@ -154,6 +154,7 @@ Kaidah Penulisan MelekIsu:
    - "Tata Kelola Publik" (regulasi, tata kelola, transparansi, hukum, birokrasi, pemda, anggaran daerah/nasional)
    - "Energi & Lingkungan" (transisi energi, iklim, abrasi, polusi, emisi, plts, hutan, konservasi)
 5. FORMAT OUTPUT: Wajib HANYA berupa JSON murni tanpa pembungkus markdown (tanpa \`\`\`json).
+6. TANPA EMOJI: DILARANG KERAS menggunakan emoji atau simbol berlebihan (seperti 🚀, 🔥, ⚡, 🎉, ✨, dll) pada judul, ringkasan, maupun isi berita. Tulisan harus bergaya jurnalisme kebijakan yang bersih, serius, dan kredibel.
 
 Format JSON yang wajib dihasilkan:
 {

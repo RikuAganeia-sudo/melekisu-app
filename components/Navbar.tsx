@@ -11,6 +11,7 @@ import {
   LogIn,
   User,
   Search,
+  Check,
 } from "lucide-react";
 import { createClient } from "@/lib/supabase/client";
 
@@ -201,8 +202,9 @@ export default function Navbar() {
                 <span className="text-xs font-bold text-[#28180C] group-hover:text-[#9B4000] transition-colors">
                   {currentUser.fullName ? currentUser.fullName.split(" ")[0] : "Warga"}
                 </span>
-                <span className="text-[10px] bg-[#FFF1E9] text-[#9B4000] font-bold px-2 py-0.5 rounded-full border border-[#DEC0B3]/40">
-                  ✓ Warga
+                <span className="inline-flex items-center gap-1 text-[10px] bg-[#FFF1E9] text-[#9B4000] font-bold px-2 py-0.5 rounded-full border border-[#DEC0B3]/40">
+                  <Check className="w-2.5 h-2.5" />
+                  <span>Warga</span>
                 </span>
               </div>
             </Link>
@@ -289,7 +291,10 @@ export default function Navbar() {
                     </div>
                     <span>{currentUser.fullName}</span>
                   </div>
-                  <span className="text-[10px] bg-[#FFF1E9] text-[#9B4000] px-2 py-0.5 rounded-full border border-[#DEC0B3]/40">✓ Warga</span>
+                  <span className="inline-flex items-center gap-1 text-[10px] bg-[#FFF1E9] text-[#9B4000] px-2 py-0.5 rounded-full border border-[#DEC0B3]/40">
+                    <Check className="w-2.5 h-2.5" />
+                    <span>Warga</span>
+                  </span>
                 </Link>
               ) : (
                 <>

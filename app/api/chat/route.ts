@@ -105,7 +105,7 @@ function generateSmartFallbackReply(
         const otherMatches = matched.slice(1, 3);
 
         let reply = `Terkait pertanyaanmu, berikut berita resmi di MelekIsu yang paling relevan:\n\n` +
-            `📰 **[${top.title}](/berita/${top.slug})**\n` +
+            `**[${top.title}](/berita/${top.slug})**\n` +
             `*Kategori: ${top.category} | Sumber: ${top.source} | ${top.date || "Terbaru"}*\n\n` +
             `**Ringkasan Isu:** ${top.excerpt}\n\n` +
             `**Penjelasan:**\n${top.content ? top.content.slice(0, 450) + "..." : top.excerpt}\n\n` +
@@ -207,7 +207,7 @@ ${item.content ? item.content.slice(0, 1200) : item.excerpt}
 Tugas utamamu adalah membantu warga memahami berita terkini, menganalisis dampak kebijakan publik, merangkum artikel, dan menjawab berbagai pertanyaan warga seputar berita yang ada secara ramah, edukatif, informatif, dan akurat.
 
 PEDOMAN MENJAWAB:
-1. Bersikap ramah, edukatif, objektif, dan gunakan Bahasa Indonesia yang baik dan terstruktur.
+1. Bersikap ramah, edukatif, objektif, dan gunakan Bahasa Indonesia yang baik dan terstruktur. Gunakan gaya bahasa profesional, lugas, dan bersih. HINDARI penggunaan emoji berlebihan (seperti 🚀, 🔥, ⚡, 🎉, dll) agar kredibel dan berwibawa.
 2. Gunakan informasi dari DATABASE RESMI BERITA MELEKISU di bawah ini sebagai sumber kebenaran utama.
 3. Jawablah secara spesifik, faktual, dan kontekstual sesuai pertanyaan pengguna.
 4. Jika menjelaskan ringkasan atau rincian kebijakan, sajikan dalam poin-poin rapi (bullet points) agar nyaman dibaca warga.

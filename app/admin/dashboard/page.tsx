@@ -1146,7 +1146,7 @@ export default function AdminDashboardPage() {
                                         title="Ketikkan topik ringkas di judul, lalu klik untuk auto-lengkapi seluruh formulir dengan AI"
                                     >
                                         <Sparkles className={`w-3 h-3 text-amber-600 ${isAIAssisting ? "animate-spin" : ""}`} />
-                                        <span>{isAIAssisting ? "AI Menyusun..." : "✨ Auto-Lengkapi dengan AI"}</span>
+                                        <span>{isAIAssisting ? "AI Menyusun..." : "Auto-Lengkapi dengan AI"}</span>
                                     </button>
                                 </div>
                                 <input
@@ -1519,7 +1519,7 @@ export default function AdminDashboardPage() {
                                                             className="shrink-0 px-3 py-1.5 rounded-xl bg-gradient-to-r from-[#9B4000] to-[#B34B00] text-white font-extrabold text-[10px] shadow-sm hover:scale-105 active:scale-95 transition-all cursor-pointer disabled:opacity-40"
                                                             title="AI langsung menganalisis dan menerbitkan berita ini ke portal"
                                                         >
-                                                            ⚡ Terbitkan Ini
+                                                            Terbitkan Ini
                                                         </button>
                                                     </div>
                                                 );
@@ -1546,7 +1546,7 @@ export default function AdminDashboardPage() {
                                             }}
                                             className="w-full px-3.5 py-2.5 rounded-xl border border-[#DEC0B3]/80 focus:border-[#9B4000] focus:outline-none bg-white font-medium"
                                         >
-                                            <option value="">🎲 Otomatis (Pilih Acak dari Kumpulan Dataset Terkini)</option>
+                                            <option value="">Otomatis (Pilih dari Kumpulan Dataset Terkini)</option>
                                             {POLICY_DATASETS.map((ds) => (
                                                 <option key={ds.id} value={ds.id}>
                                                     [{ds.category}] {ds.title} ({ds.source})
@@ -1666,7 +1666,7 @@ export default function AdminDashboardPage() {
                                     className="flex-1 sm:flex-none inline-flex items-center justify-center gap-2 px-5 py-2.5 rounded-xl bg-gradient-to-r from-[#7C2D12] via-[#9B4000] to-[#D97706] text-white text-xs font-extrabold shadow-md hover:scale-105 active:scale-95 transition-all cursor-pointer disabled:opacity-40"
                                 >
                                     <Zap className="w-4 h-4 text-amber-200" />
-                                    <span>⚡ Terbitkan Otomatis Instan</span>
+                                    <span>Terbitkan Otomatis Instan</span>
                                 </button>
                             </div>
                         </div>

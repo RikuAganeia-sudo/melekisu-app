@@ -334,8 +334,8 @@ function AIChatWidgetInner() {
                     {/* Header Chat */}
                     <div className="bg-gradient-to-r from-[#9B4000] via-[#8C4A1E] to-[#723B18] text-white p-3.5 sm:p-4 flex items-center justify-between shadow-md">
                         <div className="flex items-center gap-2.5">
-                            <div className="w-9 h-9 rounded-2xl bg-gradient-to-tr from-[#FDB659] to-[#FFF1E9] text-[#28180C] flex items-center justify-center font-bold text-base shadow-sm ring-2 ring-white/20">
-                                🤖
+                            <div className="w-9 h-9 rounded-2xl bg-gradient-to-tr from-[#FDB659] to-[#FFF1E9] text-[#9B4000] flex items-center justify-center font-bold text-base shadow-sm ring-2 ring-white/20">
+                                <Bot className="w-5 h-5" />
                             </div>
                             <div>
                                 <div className="flex items-center gap-1.5">
@@ -384,10 +384,11 @@ function AIChatWidgetInner() {
                             </div>
                             <button
                                 onClick={() => setCustomActiveArticle(null)}
-                                className="text-[9.5px] bg-[#9B4000]/10 hover:bg-[#9B4000]/20 text-[#9B4000] font-bold px-1.5 py-0.5 rounded shrink-0 cursor-pointer transition-colors"
+                                className="inline-flex items-center gap-1 text-[9.5px] bg-[#9B4000]/10 hover:bg-[#9B4000]/20 text-[#9B4000] font-bold px-1.5 py-0.5 rounded shrink-0 cursor-pointer transition-colors"
                                 title="Bebaskan konteks untuk tanya berita lain"
                             >
-                                Semua Berita ✕
+                                <span>Semua Berita</span>
+                                <X className="w-2.5 h-2.5" />
                             </button>
                         </div>
                     )}
