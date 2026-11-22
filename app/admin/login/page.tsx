@@ -4,7 +4,6 @@ import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { ShieldCheck, Lock, Mail, ArrowRight, AlertCircle, Eye, EyeOff, Sparkles } from "lucide-react";
-import { createClient } from "@/lib/supabase/client";
 
 export default function AdminLoginPage() {
     const router = useRouter();
@@ -29,52 +28,23 @@ export default function AdminLoginPage() {
 
         const cleanEmail = email.trim().toLowerCase();
 
-        // 1. Kredensial Redaksi Standar (Untuk kemudahan pengujian demo juri & redaksi lokal)
-        const isDefaultEditorial = (cleanEmail === "admin@melekisu.id" || cleanEmail === "redaksi@melekisu.id") && password === "admin123";
-
-        if (isDefaultEditorial) {
-            const sessionPayload = {
-                id: "admin-master",
-                email: cleanEmail,
-                name: "Redaksi Pelaksana MelekIsu",
-                role: "Super Admin",
-                loginAt: new Date().toISOString(),
-            };
-            localStorage.setItem("melekisu_admin_session", JSON.stringify(sessionPayload));
-            router.replace("/admin/dashboard");
-            return;
-        }
-
-        // 2. Cek juga via Supabase Auth jika ada akun admin terdaftar di database
         try {
-            const supabase = createClient();
-            const { data, error } = await supabase.auth.signInWithPassword({
-                email: cleanEmail,
-                password: password,
+            const res = await fetch("/api/admin/login", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ email: cleanEmail, password }),
             });
 
-            if (error) {
-                setErrorMsg("Kredensial tidak valid atau akun Anda belum memiliki izin Administrator.");
+            const data = await res.json();
+
+            if (!res.ok || !data.success) {
+                setErrorMsg(data.message || "Kredensial tidak valid atau akun Anda belum memiliki izin Administrator.");
                 setIsLoading(false);
                 return;
             }
 
-            // Cek role pengguna pada user metadata
-            const userRole = data.user?.user_metadata?.role;
-            if (userRole === "admin" || cleanEmail.includes("admin")) {
-                const sessionPayload = {
-                    id: data.user.id,
-                    email: data.user.email,
-                    name: data.user.user_metadata?.full_name || "Administrator MelekIsu",
-                    role: "Admin Redaksi",
-                    loginAt: new Date().toISOString(),
-                };
-                localStorage.setItem("melekisu_admin_session", JSON.stringify(sessionPayload));
-                router.replace("/admin/dashboard");
-            } else {
-                setErrorMsg("Akses ditolak: Akun Anda terdaftar sebagai Warga, bukan Administrator.");
-                await supabase.auth.signOut();
-            }
+            localStorage.setItem("melekisu_admin_session", JSON.stringify(data.session));
+            router.replace("/admin/dashboard");
         } catch (err: any) {
             setErrorMsg("Gagal menghubungi server otentikasi. Silakan periksa koneksi Anda.");
         } finally {
@@ -146,7 +116,7 @@ export default function AdminLoginPage() {
                                     required
                                     value={email}
                                     onChange={(e) => setEmail(e.target.value)}
-                                    placeholder="admin@melekisu.id"
+                                    placeholder="admin@domain.id"
                                     className="w-full bg-[#1E120A] border border-[#4D2E1B] focus:border-[#FDB659] rounded-xl pl-10 pr-4 py-2.5 text-xs text-white placeholder:text-[#664E3F] focus:outline-none transition-colors"
                                 />
                             </div>
@@ -189,18 +159,6 @@ export default function AdminLoginPage() {
                             )}
                         </button>
                     </form>
-
-                    {/* Akun Demo Praktis untuk Juri / Evaluasi */}
-                    <div className="mt-6 pt-5 border-t border-[#3D2516] text-center">
-                        <p className="text-[11px] text-[#A68877]">
-                            Kredensial Demo Redaksi:
-                        </p>
-                        <div className="mt-1.5 p-2 bg-[#1E120A]/70 rounded-xl border border-[#3D2516] text-[11px] text-[#FDB659] font-mono flex items-center justify-center gap-2">
-                            <span>admin@melekisu.id</span>
-                            <span className="text-[#664E3F]">|</span>
-                            <span>admin123</span>
-                        </div>
-                    </div>
                 </div>
             </main>
 

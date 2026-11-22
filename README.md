@@ -100,7 +100,7 @@ Buka peramban di [http://localhost:3000](http://localhost:3000).
 
 | Peran | URL Masuk | Kredensial Default | Keterangan |
 | :--- | :--- | :--- | :--- |
-| **Admin / Tim Redaksi** | `/admin/login` | Email: `admin@melekisu.id`<br>Sandi: `admin123` | Mengakses dashboard editorial, publikasi berita otomatis AI, dan kurasi komentar. |
+| **Admin / Tim Redaksi** | `/admin/login` | Dikonfigurasi via `.env.local`<br>(`ADMIN_EMAIL` & `ADMIN_PASSWORD`) | Mengakses dashboard editorial, publikasi berita otomatis AI, dan kurasi komentar. |
 | **Warga Publik** | `/masuk` | Silakan daftar akun baru di `/daftar` atau gunakan akun warga terdaftar. | Menyampaikan tanggapan kebijakan, memberikan upvote apresiasi, dan bertanya ke Asisten AI. |
 
 ---
