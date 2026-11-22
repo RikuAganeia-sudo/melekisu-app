@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import {
   Menu,
   X,
@@ -43,7 +43,13 @@ export default function Navbar() {
   const [mobileOpen, setMobileOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
   const [currentUser, setCurrentUser] = useState<NavUserProfile | null>(null);
+  const pathname = usePathname();
   const router = useRouter();
+
+  const isActiveNav = (href: string) => {
+    if (href === "/") return pathname === "/";
+    return pathname?.startsWith(href);
+  };
 
   // Sinkronisasi sesi user Supabase & localStorage secara real-time
   useEffect(() => {
@@ -52,11 +58,18 @@ export default function Navbar() {
     const formatUserProfile = (authUser: AuthUserLike): NavUserProfile => {
       return {
         id: authUser.id,
-        fullName: authUser.user_metadata?.full_name || authUser.email?.split("@")[0] || "Warga",
+        fullName:
+          authUser.user_metadata?.full_name ||
+          authUser.email?.split("@")[0] ||
+          "Warga",
         emailOrPhone: authUser.email,
         role: authUser.user_metadata?.role || "Warga Terverifikasi",
         joinedDate: authUser.created_at
-          ? new Date(authUser.created_at).toLocaleDateString("id-ID", { day: 'numeric', month: 'long', year: 'numeric' })
+          ? new Date(authUser.created_at).toLocaleDateString("id-ID", {
+            day: "numeric",
+            month: "long",
+            year: "numeric",
+          })
           : "Terdaftar",
       };
     };
@@ -82,7 +95,9 @@ export default function Navbar() {
     });
 
     // 2. Dengarkan perubahan status auth dari Supabase
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
+    const {
+      data: { subscription },
+    } = supabase.auth.onAuthStateChange((_event, session) => {
       if (session?.user) {
         const profile = formatUserProfile(session.user);
         setCurrentUser(profile);
@@ -130,9 +145,8 @@ export default function Navbar() {
   return (
     <header className="sticky top-0 z-50 border-b border-[#DEC0B3]/40 bg-[#FFF8F5]/95 backdrop-blur-sm">
       <div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8 gap-4">
-
-        {/* Left: Logo & Nav Links */}
-        <div className="flex items-center gap-6">
+        {/* Left: Logo & Kapsul Nav Links */}
+        <div className="flex items-center gap-5">
           <Link
             href="/"
             className="flex items-center gap-2 text-xl font-bold tracking-tight text-[#9B4000] shrink-0"
@@ -147,22 +161,34 @@ export default function Navbar() {
             </span>
           </Link>
 
-          {/* Desktop Nav */}
-          <nav className="hidden md:flex items-center gap-1">
-            {navLinks.map((link) => (
-              <Link
-                key={link.href}
-                href={link.href}
-                className="rounded-lg px-3 py-2 text-sm font-medium text-gray-600 transition-colors hover:bg-[#FFF1E9] hover:text-[#9B4000]"
-              >
-                {link.label}
-              </Link>
-            ))}
+          {/* Desktop Kapsul Nav (Beranda, Berita, Transparansi Aksi) */}
+          <nav
+            aria-label="Navigasi Utama"
+            className="hidden md:flex items-center gap-1 rounded-full bg-[#EFECE8]/90 p-1 border border-[#DEC0B3]/50 shadow-2xs"
+          >
+            {navLinks.map((link) => {
+              const active = isActiveNav(link.href);
+              return (
+                <Link
+                  key={link.href}
+                  href={link.href}
+                  className={`rounded-full px-4 py-1.5 text-sm font-medium transition-all duration-200 whitespace-nowrap ${active
+                      ? "bg-[#191C20] text-white font-semibold shadow-xs"
+                      : "text-[#4A4E54] hover:text-[#191C20] hover:bg-black/5"
+                    }`}
+                >
+                  {link.label}
+                </Link>
+              );
+            })}
           </nav>
         </div>
 
         {/* Middle: Functional Search Bar with Clear (X) Button */}
-        <form onSubmit={handleSearchSubmit} className="hidden lg:flex items-center flex-1 max-w-xs justify-end">
+        <form
+          onSubmit={handleSearchSubmit}
+          className="hidden lg:flex items-center flex-1 max-w-xs justify-end"
+        >
           <div className="relative w-full">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
 
@@ -190,17 +216,20 @@ export default function Navbar() {
         {/* --- DESKTOP AUTH / CLEAN & PROFESSIONAL USER PROFILE --- */}
         <div className="hidden md:flex items-center gap-2 shrink-0">
           {currentUser ? (
-            /* Tampilan Profil Baru: Minimalis, Clean, dan Elegan */
             <Link
               href="/profil"
               className="flex items-center gap-2.5 px-3 py-1.5 bg-white hover:bg-[#FFF1E9] text-[#28180C] rounded-full border border-[#DEC0B3]/60 transition-all shadow-xs group"
             >
               <div className="w-8 h-8 rounded-full bg-gradient-to-tr from-[#9B4000] to-[#FDB659] text-white flex items-center justify-center text-xs font-bold shadow-xs group-hover:scale-105 transition-transform">
-                {currentUser.fullName ? currentUser.fullName.charAt(0).toUpperCase() : "W"}
+                {currentUser.fullName
+                  ? currentUser.fullName.charAt(0).toUpperCase()
+                  : "W"}
               </div>
               <div className="flex items-center gap-1.5 pr-1">
                 <span className="text-xs font-bold text-[#28180C] group-hover:text-[#9B4000] transition-colors">
-                  {currentUser.fullName ? currentUser.fullName.split(" ")[0] : "Warga"}
+                  {currentUser.fullName
+                    ? currentUser.fullName.split(" ")[0]
+                    : "Warga"}
                 </span>
                 <span className="inline-flex items-center gap-1 text-[10px] bg-[#FFF1E9] text-[#9B4000] font-bold px-2 py-0.5 rounded-full border border-[#DEC0B3]/40">
                   <Check className="w-2.5 h-2.5" />
@@ -209,7 +238,6 @@ export default function Navbar() {
               </div>
             </Link>
           ) : (
-            /* Jika belum login */
             <>
               <Link
                 href="/masuk"
@@ -235,7 +263,11 @@ export default function Navbar() {
           className="rounded-lg p-2 text-gray-600 transition-colors hover:bg-gray-100 md:hidden"
           aria-label={mobileOpen ? "Tutup menu" : "Buka menu"}
         >
-          {mobileOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
+          {mobileOpen ? (
+            <X className="h-5 w-5" />
+          ) : (
+            <Menu className="h-5 w-5" />
+          )}
         </button>
       </div>
 
@@ -266,17 +298,23 @@ export default function Navbar() {
             </form>
 
             <nav className="flex flex-col gap-1">
-              {navLinks.map((link) => (
-                <Link
-                  key={link.href}
-                  href={link.href}
-                  onClick={() => setMobileOpen(false)}
-                  className="flex items-center gap-2 rounded-lg px-3 py-2.5 text-sm font-medium text-gray-700 transition-colors hover:bg-[#FFF1E9] hover:text-[#9B4000]"
-                >
-                  {link.icon && <link.icon className="h-4 w-4" />}
-                  {link.label}
-                </Link>
-              ))}
+              {navLinks.map((link) => {
+                const active = isActiveNav(link.href);
+                return (
+                  <Link
+                    key={link.href}
+                    href={link.href}
+                    onClick={() => setMobileOpen(false)}
+                    className={`flex items-center gap-2 rounded-full px-4 py-2.5 text-sm font-medium transition-colors ${active
+                        ? "bg-[#191C20] text-white font-semibold"
+                        : "text-gray-700 hover:bg-[#FFF1E9] hover:text-[#9B4000]"
+                      }`}
+                  >
+                    {link.icon && <link.icon className="h-4 w-4" />}
+                    {link.label}
+                  </Link>
+                );
+              })}
               <hr className="my-2 border-[#DEC0B3]/40" />
 
               {currentUser ? (
@@ -287,7 +325,9 @@ export default function Navbar() {
                 >
                   <div className="flex items-center gap-2">
                     <div className="w-7 h-7 rounded-full bg-gradient-to-tr from-[#9B4000] to-[#FDB659] text-white flex items-center justify-center text-xs font-bold">
-                      {currentUser.fullName ? currentUser.fullName.charAt(0).toUpperCase() : "W"}
+                      {currentUser.fullName
+                        ? currentUser.fullName.charAt(0).toUpperCase()
+                        : "W"}
                     </div>
                     <span>{currentUser.fullName}</span>
                   </div>
