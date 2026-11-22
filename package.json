@@ -6,7 +6,9 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "eslint"
+    "lint": "eslint",
+    "auto-news": "node scripts/auto-news-worker.mjs --once",
+    "auto-news:daemon": "node scripts/auto-news-worker.mjs"
   },
   "dependencies": {
     "@supabase/ssr": "^0.12.7",
