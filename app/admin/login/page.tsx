@@ -13,9 +13,10 @@ export default function AdminLoginPage() {
     const [isLoading, setIsLoading] = useState(false);
     const [errorMsg, setErrorMsg] = useState("");
 
-    // Jika sudah ada sesi admin aktif, langsung arahkan ke dashboard
+    // Sesi admin berbasis sessionStorage: otomatis terhapus saat tab atau browser ditutup
     useEffect(() => {
-        const adminSession = localStorage.getItem("melekisu_admin_session");
+        localStorage.removeItem("melekisu_admin_session");
+        const adminSession = sessionStorage.getItem("melekisu_admin_session");
         if (adminSession) {
             router.replace("/admin/dashboard");
         }
@@ -43,7 +44,9 @@ export default function AdminLoginPage() {
                 return;
             }
 
-            localStorage.setItem("melekisu_admin_session", JSON.stringify(data.session));
+            // Simpan di sessionStorage agar hanya bertahan selama tab/browser aktif
+            localStorage.removeItem("melekisu_admin_session");
+            sessionStorage.setItem("melekisu_admin_session", JSON.stringify(data.session));
             router.replace("/admin/dashboard");
         } catch (err: any) {
             setErrorMsg("Gagal menghubungi server otentikasi. Silakan periksa koneksi Anda.");

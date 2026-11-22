@@ -7,8 +7,9 @@ export default function AdminIndexPage() {
     const router = useRouter();
 
     useEffect(() => {
-        // Cek sesi login admin
-        const adminSession = localStorage.getItem("melekisu_admin_session");
+        // Cek sesi login admin berbasis tab/browser session
+        localStorage.removeItem("melekisu_admin_session");
+        const adminSession = sessionStorage.getItem("melekisu_admin_session");
         if (adminSession) {
             router.replace("/admin/dashboard");
         } else {

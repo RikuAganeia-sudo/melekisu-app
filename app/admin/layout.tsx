@@ -37,14 +37,18 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
             return;
         }
 
-        const rawSession = localStorage.getItem("melekisu_admin_session");
+        // Bersihkan sisa sesi permanen lama jika ada
+        localStorage.removeItem("melekisu_admin_session");
+
+        // Gunakan sessionStorage agar otomatis hilang saat tab atau browser ditutup
+        const rawSession = sessionStorage.getItem("melekisu_admin_session");
         if (!rawSession) {
             router.replace("/admin/login");
         } else {
             try {
                 setAdmin(JSON.parse(rawSession));
             } catch {
-                localStorage.removeItem("melekisu_admin_session");
+                sessionStorage.removeItem("melekisu_admin_session");
                 router.replace("/admin/login");
             }
             setIsChecking(false);
@@ -65,6 +69,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
     }
 
     const handleLogout = () => {
+        sessionStorage.removeItem("melekisu_admin_session");
         localStorage.removeItem("melekisu_admin_session");
         router.replace("/admin/login");
     };
