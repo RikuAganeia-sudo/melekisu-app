@@ -1,9 +1,9 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
-import { Eye, EyeOff, CheckCircle2, ArrowRight, AlertCircle, Loader2, Lock } from "lucide-react";
+import { Eye, EyeOff, CheckCircle2, ArrowRight, AlertCircle, Loader2, Lock, ArrowLeft } from "lucide-react";
 import { createClient } from "@/lib/supabase/client";
 
 export default function UbahSandiPage() {
@@ -16,8 +16,67 @@ export default function UbahSandiPage() {
     const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
     const [loading, setLoading] = useState(false);
+    const [isVerifying, setIsVerifying] = useState(true);
+    const [hasRecoverySession, setHasRecoverySession] = useState(false);
     const [errorMessage, setErrorMessage] = useState("");
     const [isSuccess, setIsSuccess] = useState(false);
+
+    useEffect(() => {
+        let isMounted = true;
+
+        const checkSession = async () => {
+            try {
+                // 1. Cek parameter URL ?code= (PKCE exchange jika dialihkan langsung)
+                const searchParams = new URLSearchParams(window.location.search);
+                const code = searchParams.get("code");
+                if (code) {
+                    const { error } = await supabase.auth.exchangeCodeForSession(code);
+                    if (!error && isMounted) {
+                        setHasRecoverySession(true);
+                        setIsVerifying(false);
+                        return;
+                    }
+                }
+
+                // 2. Cek sesi aktif saat ini
+                const { data: { session } } = await supabase.auth.getSession();
+                if (session && isMounted) {
+                    setHasRecoverySession(true);
+                    setIsVerifying(false);
+                    return;
+                }
+
+                // 3. Dengarkan event auth perubahan
+                const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
+                    if (isMounted) {
+                        if (event === "PASSWORD_RECOVERY" || session) {
+                            setHasRecoverySession(true);
+                        }
+                        setIsVerifying(false);
+                    }
+                });
+
+                // Jeda toleransi pembacaan hash token
+                setTimeout(() => {
+                    if (isMounted) {
+                        setIsVerifying(false);
+                    }
+                }, 1200);
+
+                return () => {
+                    subscription.unsubscribe();
+                };
+            } catch (err) {
+                if (isMounted) setIsVerifying(false);
+            }
+        };
+
+        checkSession();
+
+        return () => {
+            isMounted = false;
+        };
+    }, [supabase]);
 
     const handleUpdatePassword = async (e: React.FormEvent) => {
         e.preventDefault();
@@ -46,7 +105,11 @@ export default function UbahSandiPage() {
             });
 
             if (error) {
-                setErrorMessage(error.message || "Gagal memperbarui kata sandi.");
+                if (error.message.includes("Auth session missing") || error.message.includes("session")) {
+                    setErrorMessage("Sesi pemulihan tidak valid atau sudah kedaluwarsa. Silakan minta tautan baru di halaman Lupa Sandi.");
+                } else {
+                    setErrorMessage(error.message || "Gagal memperbarui kata sandi.");
+                }
                 return;
             }
 
@@ -88,6 +151,34 @@ export default function UbahSandiPage() {
                         </p>
                     </div>
                 </div>
+
+                {/* Indikator Verifikasi Sesi */}
+                {isVerifying && (
+                    <div className="flex items-center justify-center gap-2 py-4 text-xs text-[#8B7266]">
+                        <Loader2 className="w-4 h-4 animate-spin text-[#9B4000]" />
+                        <span>Memverifikasi tautan keamanan...</span>
+                    </div>
+                )}
+
+                {/* Peringatan jika Sesi Tidak Valid */}
+                {!isVerifying && !hasRecoverySession && !isSuccess && (
+                    <div className="bg-amber-50 border border-amber-200 text-amber-900 p-3.5 rounded-xl text-xs flex items-start gap-2.5">
+                        <AlertCircle className="w-4 h-4 shrink-0 text-amber-600 mt-0.5" />
+                        <div className="space-y-1">
+                            <p className="font-bold">Perhatian Sesi Pemulihan</p>
+                            <p className="text-[11px] text-amber-800 leading-relaxed">
+                                Pastikan Anda membuka halaman ini dari tautan resmi di email Anda. Jika tautan sudah kedaluwarsa, silakan minta tautan baru.
+                            </p>
+                            <Link
+                                href="/lupa-sandi"
+                                className="inline-flex items-center gap-1 text-[11px] font-bold text-[#9B4000] hover:underline pt-1"
+                            >
+                                <ArrowLeft className="w-3 h-3" />
+                                <span>Minta tautan baru di sini</span>
+                            </Link>
+                        </div>
+                    </div>
+                )}
 
                 {/* Notifikasi Error */}
                 {errorMessage && (
@@ -172,13 +263,13 @@ export default function UbahSandiPage() {
 
                         <button
                             type="submit"
-                            disabled={loading}
+                            disabled={loading || isVerifying}
                             className="mt-1 w-full py-3.5 bg-[#9B4000] hover:bg-[#8C4A1E] text-white text-xs font-extrabold uppercase tracking-wider rounded-xl shadow-md transition-all cursor-pointer flex items-center justify-center gap-2 disabled:opacity-70 disabled:cursor-not-allowed"
                         >
                             {loading ? (
                                 <>
                                     <Loader2 className="w-4 h-4 animate-spin" />
-                                    <span>Menyimpan Sandi Baru...</span>
+                                    <span>Memperbarui Sandi...</span>
                                 </>
                             ) : (
                                 <>
@@ -187,15 +278,21 @@ export default function UbahSandiPage() {
                                 </>
                             )}
                         </button>
-
-                        <div className="text-center pt-2">
-                            <Link href="/masuk" className="text-xs text-[#574238] hover:text-[#9B4000] font-semibold transition-colors">
-                                Batalkan dan kembali ke Halaman Masuk
-                            </Link>
-                        </div>
                     </form>
                 )}
 
+                {/* Navigasi Kembali */}
+                {!isSuccess && (
+                    <div className="text-center pt-2 border-t border-[#DEC0B3]/40">
+                        <Link
+                            href="/masuk"
+                            className="inline-flex items-center gap-1.5 text-xs font-bold text-[#8B7266] hover:text-[#9B4000] transition-colors"
+                        >
+                            <ArrowLeft className="w-3.5 h-3.5" />
+                            <span>Batal & Kembali ke Halaman Masuk</span>
+                        </Link>
+                    </div>
+                )}
             </div>
         </div>
     );

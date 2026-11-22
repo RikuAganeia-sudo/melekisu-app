@@ -19,8 +19,9 @@ export default function LupaSandiPage() {
         setErrorMessage("");
 
         try {
+            const origin = window.location.origin;
             const { error } = await supabase.auth.resetPasswordForEmail(email.trim(), {
-                redirectTo: `${window.location.origin}/ubah-sandi`,
+                redirectTo: `${origin}/auth/callback?next=/ubah-sandi`,
             });
 
             if (error) {
