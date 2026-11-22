@@ -436,17 +436,36 @@ export default function HomePage() {
 
   return (
     <div className="min-h-screen bg-[#FFF8F5] text-[#28180C] selection:bg-[#FDB659]/30">
-      {/* ================= HERO PENGANTAR MELEKISU (LATAR SENJA JAKARTA) ================= */}
-      <section className="relative min-h-[86vh] w-full flex flex-col justify-between overflow-hidden bg-[#161E27]">
-        {/* Latar Foto Senja Jakarta + Overlay Gradasi */}
+      {/* ================= HERO PENGANTAR (GRADASI KANAN & MENYATU DENGAN NAVBAR #FFF8F5) ================= */}
+      <section className="relative min-h-[78vh] w-full flex flex-col justify-between overflow-hidden bg-[#FFF8F5] border-b border-[#DEC0B3]/30">
+        {/* Foto Senja Jakarta Difokuskan & Dipudarkan ke Sisi Kanan */}
         <div
-          className="absolute inset-0 bg-cover bg-center bg-no-repeat"
+          className="
+            pointer-events-none absolute inset-y-0 right-0 w-full lg:w-[66%]
+            bg-cover bg-center bg-no-repeat
+            [mask-image:linear-gradient(to_right,transparent_0%,rgba(0,0,0,0.25)_22%,rgba(0,0,0,0.85)_55%,black_100%)]
+            [-webkit-mask-image:linear-gradient(to_right,transparent_0%,rgba(0,0,0,0.25)_22%,rgba(0,0,0,0.85)_55%,black_100%)]
+          "
           style={{
-            backgroundImage: "url('/images/jakarta.jpg')",
+            backgroundImage: "url('/images/jakarta-senja.jpg')",
           }}
         />
-        <div className="absolute inset-0 bg-gradient-to-r from-[#111821]/92 via-[#19222C]/75 to-[#19222C]/40" />
-        <div className="absolute inset-0 bg-gradient-to-t from-[#111821]/85 via-transparent to-[#111821]/45" />
+
+        {/* Gradasi Warna #FFF8F5 agar Menyatu Halus dengan Navbar & Bagian Bawah */}
+        <div
+          className="pointer-events-none absolute inset-0"
+          style={{
+            background:
+              "linear-gradient(90deg, #FFF8F5 0%, rgba(255,248,245,0.97) 36%, rgba(255,248,245,0.68) 62%, rgba(255,248,245,0.12) 100%)",
+          }}
+        />
+        <div
+          className="pointer-events-none absolute inset-0"
+          style={{
+            background:
+              "linear-gradient(180deg, rgba(255,248,245,0.88) 0%, rgba(255,248,245,0.08) 28%, rgba(255,248,245,0.18) 72%, #FFF8F5 100%)",
+          }}
+        />
 
         {/* Bar Kategori & Pencarian Cepat di Bagian Atas Hero */}
         <div className="relative z-10 max-w-[1360px] w-full mx-auto px-6 pt-6 flex flex-col md:flex-row items-stretch md:items-center justify-between gap-3">
@@ -458,9 +477,9 @@ export default function HomePage() {
                   setSelectedCategory(cat);
                   scrollToSection("sorotan-utama");
                 }}
-                className={`px-4 py-1.5 rounded-full text-xs font-bold transition-all whitespace-nowrap shadow-sm cursor-pointer ${selectedCategory === cat
-                  ? "bg-[#9B4000] text-white shadow-md"
-                  : "bg-[#F8F1E7]/95 text-[#28180C] hover:bg-white"
+                className={`px-4 py-1.5 rounded-full text-xs font-bold transition-all whitespace-nowrap shadow-2xs cursor-pointer border ${selectedCategory === cat
+                    ? "bg-[#9B4000] text-white border-[#9B4000] shadow-sm"
+                    : "bg-white/85 text-[#574238] border-[#DEC0B3]/60 hover:bg-[#FFF1E9] hover:text-[#9B4000]"
                   }`}
               >
                 {cat}
@@ -494,25 +513,28 @@ export default function HomePage() {
           </div>
         </div>
 
-        {/* Konten Pengantar Singkat & Ajakan Membaca Berita */}
-        <div className="relative z-10 max-w-[1360px] w-full mx-auto px-6 my-auto py-12">
-          <div className="max-w-xl space-y-5">
-            <h1 className="font-serif text-4xl sm:text-5xl lg:text-[56px] font-bold leading-[1.12] text-[#E5C99B] drop-shadow-sm">
-              Jelajahi Nadi Kebijakan Publik Indonesia.
+        {/* Konten Pengantar Singkat & Ajakan Membaca Berita di Sisi Kiri */}
+        <div className="relative z-10 max-w-[1360px] w-full mx-auto px-6 my-auto py-10">
+          <div className="max-w-xl space-y-4">
+            <h1 className="font-serif text-4xl sm:text-5xl lg:text-[54px] font-bold leading-[1.12] tracking-tight text-[#28180C]">
+              Jelajahi Nadi{" "}
+              <span className="text-[#9B4000] font-normal italic">
+                Kebijakan Publik.
+              </span>
             </h1>
 
-            <p className="text-sm sm:text-base lg:text-[17px] text-[#FFF8F5]/95 leading-relaxed">
-              <strong className="font-bold text-white">MelekIsu</strong> hadir
-              untuk membedah kebijakan, menyajikan data, dan mendorong
-              transparansi. Temukan fakta di balik isu terkini dan ambil peran
-              Anda dalam diskursus.
+            <p className="text-sm sm:text-base text-[#574238] leading-relaxed max-w-lg">
+              <strong className="font-bold text-[#28180C]">MelekIsu</strong>{" "}
+              hadir untuk membedah kebijakan, menyajikan data, dan mendorong
+              transparansi. Temukan fakta di balik isu terkini dan mulai baca
+              kajian untuk mengambil peran dalam diskursus warga.
             </p>
 
             <div className="pt-2 flex flex-wrap items-center gap-3">
               <button
                 type="button"
                 onClick={() => scrollToSection("sorotan-utama")}
-                className="px-6 py-3 rounded-full bg-[#B56D34] hover:bg-[#C87A3E] text-white text-xs sm:text-sm font-bold shadow-lg transition-all flex items-center gap-2 cursor-pointer"
+                className="px-6 py-3 rounded-full bg-[#9B4000] hover:bg-[#823600] text-white text-xs sm:text-sm font-bold shadow-sm transition-all flex items-center gap-2 cursor-pointer"
               >
                 <span>Mulai Membaca</span>
                 <ArrowRight className="w-4 h-4" />
@@ -520,26 +542,26 @@ export default function HomePage() {
 
               <Link
                 href="/berita"
-                className="px-5 py-3 rounded-full bg-white/10 hover:bg-white/20 text-white border border-white/35 backdrop-blur-xs text-xs sm:text-sm font-semibold transition-all"
+                className="px-5 py-3 rounded-full bg-white/85 hover:bg-white text-[#28180C] border border-[#DEC0B3]/80 text-xs sm:text-sm font-semibold transition-all shadow-2xs"
               >
-                Semua Berita
+                Baca Berita Terkini
               </Link>
             </div>
           </div>
         </div>
 
         {/* Indikator Scroll ke Bawah */}
-        <div className="relative z-10 pb-6 flex flex-col items-center justify-center text-white/85">
+        <div className="relative z-10 pb-5 flex flex-col items-center justify-center text-[#574238]">
           <button
             type="button"
             onClick={() => scrollToSection("sorotan-utama")}
             aria-label="Scroll ke berita dan kajian"
             className="flex flex-col items-center gap-1.5 group cursor-pointer"
           >
-            <div className="w-7 h-10 rounded-full border border-white/60 flex items-center justify-center group-hover:border-[#E5C99B] transition-colors">
-              <ArrowDown className="w-3.5 h-3.5 text-[#E5C99B] animate-bounce" />
+            <div className="w-7 h-10 rounded-full border border-[#DEC0B3] bg-white/75 flex items-center justify-center group-hover:border-[#9B4000] transition-colors">
+              <ArrowDown className="w-3.5 h-3.5 text-[#9B4000] animate-bounce" />
             </div>
-            <span className="text-[10px] tracking-[0.22em] uppercase font-semibold text-stone-200">
+            <span className="text-[10px] tracking-[0.22em] uppercase font-bold text-[#8B7266]">
               Scroll to Explore
             </span>
           </button>
@@ -773,8 +795,8 @@ export default function HomePage() {
                   <button
                     onClick={handleLikeClick}
                     className={`flex items-center gap-1.5 font-semibold px-3 py-1.5 rounded-xl transition-all cursor-pointer ${hasLiked
-                      ? "bg-[#9B4000] text-white shadow-sm"
-                      : "bg-[#FFF1E9] text-[#574238] hover:text-[#9B4000]"
+                        ? "bg-[#9B4000] text-white shadow-sm"
+                        : "bg-[#FFF1E9] text-[#574238] hover:text-[#9B4000]"
                       }`}
                   >
                     <ThumbsUp
@@ -958,10 +980,10 @@ export default function HomePage() {
           <div className="bg-white rounded-3xl max-w-sm w-full p-6 shadow-2xl border border-[#DEC0B3]/40 flex flex-col items-center text-center gap-4">
             <div
               className={`w-14 h-14 rounded-full flex items-center justify-center shadow-inner ${userAlert.type === "error"
-                ? "bg-rose-50 text-rose-600 border border-rose-200"
-                : userAlert.type === "success"
-                  ? "bg-emerald-50 text-emerald-600 border border-emerald-200"
-                  : "bg-amber-50 text-amber-700 border border-amber-200"
+                  ? "bg-rose-50 text-rose-600 border border-rose-200"
+                  : userAlert.type === "success"
+                    ? "bg-emerald-50 text-emerald-600 border border-emerald-200"
+                    : "bg-amber-50 text-amber-700 border border-amber-200"
                 }`}
             >
               <AlertCircle className="w-8 h-8" />
