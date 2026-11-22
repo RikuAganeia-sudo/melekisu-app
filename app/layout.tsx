@@ -17,6 +17,11 @@ export const metadata: Metadata = {
   },
   description:
     "Platform berita publik dan aspirasi warga Indonesia. Baca berita, sampaikan komentar konstruktif, dan pantau perkembangan isu-isu penting.",
+  icons: {
+    icon: "/images/logo.png",
+    shortcut: "/images/logo.png",
+    apple: "/images/logo.png",
+  },
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
