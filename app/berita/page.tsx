@@ -8,6 +8,7 @@ import { getCombinedNews, sendComment, getCommentsForSlug, isTextViolating, togg
 import { NewsItem } from "@/data/news";
 import { getCategoryCoverImage, POLICY_CATEGORIES } from "@/lib/policyDatasets";
 import { createClient } from "@/lib/supabase/client";
+import CategorySlider from "@/components/CategorySlider";
 
 function matchCategory(itemCategory: any, selected: string): boolean {
     if (selected === "Semua") return true;
@@ -404,23 +405,14 @@ function BeritaContent() {
 
     return (
         <div className="min-h-screen bg-[#FFF8F5] text-[#28180C] selection:bg-[#FDB659]/30">
-            {/* Top Navigation Category Pills Section */}
+            {/* Top Navigation Category Pills Section with Interactive Slider */}
             <section className="sticky top-20 z-40 bg-[#FFF8F5]/95 backdrop-blur-md border-b border-[#DEC0B3]/40 shadow-xs">
-                <div className="max-w-[1360px] mx-auto px-6 py-2.5">
-                    <div className="flex items-center gap-2 overflow-x-auto w-full pb-1 scrollbar-none">
-                        {availableCategories.map((cat) => (
-                            <button
-                                key={cat}
-                                onClick={() => setSelectedCategory(cat)}
-                                className={`px-4 py-1.5 rounded-full text-xs font-bold transition-all whitespace-nowrap shadow-xs cursor-pointer shrink-0 ${selectedCategory === cat
-                                        ? "bg-[#9B4000] text-white shadow-sm"
-                                        : "bg-white text-[#574238] hover:bg-[#FFE3D1] border border-[#DEC0B3]/40"
-                                    }`}
-                            >
-                                {cat}
-                            </button>
-                        ))}
-                    </div>
+                <div className="max-w-[1360px] mx-auto px-4 sm:px-6 py-2">
+                    <CategorySlider
+                        categories={availableCategories}
+                        selectedCategory={selectedCategory}
+                        onSelectCategory={(cat) => setSelectedCategory(cat)}
+                    />
                 </div>
             </section>
 

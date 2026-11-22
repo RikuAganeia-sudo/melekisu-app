@@ -11,6 +11,7 @@ import {
 import { NewsItem } from "@/data/news";
 import { getCategoryCoverImage } from "@/lib/policyDatasets";
 import { createClient } from "@/lib/supabase/client";
+import CategorySlider from "@/components/CategorySlider";
 import {
   Lightbulb,
   MessageSquare,
@@ -467,25 +468,17 @@ export default function HomePage() {
           }}
         />
 
-        {/* Bar Kategori di Bagian Atas Hero */}
-        <div className="relative z-10 max-w-[1360px] w-full mx-auto px-6 pt-6">
-          <div className="flex items-center gap-2 overflow-x-auto pb-2 scrollbar-none">
-            {availableCategories.map((cat) => (
-              <button
-                key={cat}
-                onClick={() => {
-                  setSelectedCategory(cat);
-                  scrollToSection("sorotan-utama");
-                }}
-                className={`px-4 py-1.5 rounded-full text-xs font-bold transition-all whitespace-nowrap shadow-2xs cursor-pointer border shrink-0 ${selectedCategory === cat
-                    ? "bg-[#9B4000] text-white border-[#9B4000] shadow-sm"
-                    : "bg-white/85 text-[#574238] border-[#DEC0B3]/60 hover:bg-[#FFF1E9] hover:text-[#9B4000]"
-                  }`}
-              >
-                {cat}
-              </button>
-            ))}
-          </div>
+        {/* Bar Kategori Slider di Bagian Atas Hero */}
+        <div className="relative z-10 max-w-[1360px] w-full mx-auto px-4 sm:px-6 pt-6">
+          <CategorySlider
+            categories={availableCategories}
+            selectedCategory={selectedCategory}
+            onSelectCategory={(cat) => {
+              setSelectedCategory(cat);
+              scrollToSection("sorotan-utama");
+            }}
+            theme="hero"
+          />
         </div>
 
         {/* Konten Pengantar Singkat & Ajakan Membaca Berita di Sisi Kiri */}
