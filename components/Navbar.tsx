@@ -195,7 +195,7 @@ export default function Navbar() {
         {/* Middle: Oval Search Bar with Clear (X) Button */}
         <form
           onSubmit={handleSearchSubmit}
-          className="hidden md:flex items-center flex-1 max-w-xs justify-end"
+          className="hidden md:flex items-center flex-1 max-w-sm lg:max-w-md xl:max-w-lg justify-end"
         >
           <div className="relative w-full">
             <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-[#8B7266]" />
@@ -227,24 +227,19 @@ export default function Navbar() {
             <Link
               href="/profil"
               onClick={() => setPendingHref("/profil")}
-              className="flex items-center gap-2.5 px-3 py-1.5 bg-white hover:bg-[#FFF1E9] text-[#28180C] rounded-full border border-[#DEC0B3]/60 transition-all duration-300 ease-out active:scale-95 shadow-xs group"
+              className="flex items-center gap-2 pl-1 pr-3 py-1 bg-white hover:bg-[#FFF1E9] text-[#28180C] rounded-full border border-[#DEC0B3]/60 transition-all duration-300 ease-out active:scale-95 shadow-xs group"
+              title="Profil Saya"
             >
-              <div className="w-8 h-8 rounded-full bg-gradient-to-tr from-[#9B4000] to-[#FDB659] text-white flex items-center justify-center text-xs font-bold shadow-xs group-hover:scale-105 transition-transform duration-200">
+              <div className="w-7 h-7 rounded-full bg-gradient-to-tr from-[#9B4000] to-[#FDB659] text-white flex items-center justify-center text-xs font-bold shadow-xs group-hover:scale-105 transition-transform duration-200">
                 {currentUser.fullName
                   ? currentUser.fullName.charAt(0).toUpperCase()
                   : "W"}
               </div>
-              <div className="flex items-center gap-1.5 pr-1">
-                <span className="text-xs font-bold text-[#28180C] group-hover:text-[#9B4000] transition-colors">
-                  {currentUser.fullName
-                    ? currentUser.fullName.split(" ")[0]
-                    : "Warga"}
-                </span>
-                <span className="inline-flex items-center gap-1 text-[10px] bg-[#FFF1E9] text-[#9B4000] font-bold px-2 py-0.5 rounded-full border border-[#DEC0B3]/40">
-                  <Check className="w-2.5 h-2.5" />
-                  <span>Warga</span>
-                </span>
-              </div>
+              <span className="text-xs font-bold text-[#28180C] group-hover:text-[#9B4000] transition-colors max-w-[120px] truncate">
+                {currentUser.fullName
+                  ? currentUser.fullName.split(" ")[0]
+                  : "Warga"}
+              </span>
             </Link>
           ) : (
             <>
@@ -348,10 +343,6 @@ export default function Navbar() {
                     </div>
                     <span>{currentUser.fullName}</span>
                   </div>
-                  <span className="inline-flex items-center gap-1 text-[10px] bg-[#FFF1E9] text-[#9B4000] px-2 py-0.5 rounded-full border border-[#DEC0B3]/40">
-                    <Check className="w-2.5 h-2.5" />
-                    <span>Warga</span>
-                  </span>
                 </Link>
               ) : (
                 <>
