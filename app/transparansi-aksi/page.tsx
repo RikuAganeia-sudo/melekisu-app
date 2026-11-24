@@ -82,17 +82,17 @@ export default function TransparansiAksiPage() {
         <div className="min-h-screen bg-gradient-to-b from-[#FFF8F5] via-[#FFF3EC] to-[#FFF8F5] text-[#28180C] selection:bg-[#FDB659]/30 pb-20">
 
             {/* Sticky Navigation Filter Bar */}
-            <section className="sticky top-20 z-40 bg-[#FFF8F5]/80 backdrop-blur-xl border-b border-[#DEC0B3]/30 shadow-xs">
-                <div className="max-w-[1360px] mx-auto px-6 py-3 flex items-center justify-between">
-                    <div className="flex items-center gap-2.5 overflow-x-auto w-full pb-1 md:pb-0 scrollbar-none">
+            <section className="sticky top-20 z-40 bg-[#FFF8F5]/85 backdrop-blur-xl border-b border-[#DEC0B3]/30 shadow-xs">
+                <div className="max-w-[1360px] mx-auto px-6 py-2.5 flex items-center justify-between">
+                    <div className="flex items-center gap-2.5 overflow-x-auto w-full py-1.5 px-1 scrollbar-none">
                         {["Semua", "Selesai", "Progres", "Kajian"].map((status) => (
                             <button
                                 key={status}
                                 onClick={() => setFilterStatus(status)}
-                                className={`px-5 py-2 rounded-2xl text-xs font-bold transition-all whitespace-nowrap shadow-xs flex items-center gap-1.5 cursor-pointer ${
+                                className={`px-5 py-2 rounded-2xl text-xs font-bold transition-all whitespace-nowrap shadow-xs flex items-center gap-1.5 shrink-0 cursor-pointer ${
                                     filterStatus === status
-                                        ? "bg-gradient-to-r from-[#9B4000] to-[#B34B00] text-white shadow-md scale-105"
-                                        : "bg-white/80 text-[#574238] hover:bg-[#FFE3D1] border border-[#DEC0B3]/40"
+                                        ? "bg-gradient-to-r from-[#9B4000] to-[#B34B00] text-white shadow-md ring-2 ring-[#9B4000]/20"
+                                        : "bg-white/90 text-[#574238] hover:bg-[#FFE3D1] border border-[#DEC0B3]/40 hover:text-[#9B4000]"
                                 }`}
                             >
                                 {status === "Semua" && <Layers className="w-3.5 h-3.5" />}
@@ -125,14 +125,6 @@ export default function TransparansiAksiPage() {
                                 Rekam jejak transparan atas tindak lanjut, solusi nyata, dan komitmen resmi lembaga pemerintahan terhadap aspirasi konstruktif warga.
                             </p>
                         </div>
-                    </div>
-
-                    <div className="relative z-10 shrink-0 bg-white/80 backdrop-blur-md border border-[#DEC0B3]/40 px-5 py-3 rounded-2xl shadow-xs text-right hidden lg:block">
-                        <span className="text-[11px] font-bold text-[#8B7266] uppercase tracking-wider block">Status Sinkronisasi</span>
-                        <span className="text-xs font-extrabold text-emerald-700 flex items-center gap-1.5 mt-0.5 justify-end">
-                            <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
-                            Live Terkoneksi Supabase
-                        </span>
                     </div>
                 </div>
 

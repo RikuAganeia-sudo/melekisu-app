@@ -11,7 +11,6 @@ import {
 import { NewsItem } from "@/data/news";
 import { getCategoryCoverImage, POLICY_CATEGORIES } from "@/lib/policyDatasets";
 import { createClient } from "@/lib/supabase/client";
-import CategorySlider from "@/components/CategorySlider";
 import {
   Lightbulb,
   MessageSquare,
@@ -500,19 +499,6 @@ export default function HomePage() {
               "linear-gradient(180deg, rgba(255,248,245,0.92) 0%, rgba(255,248,245,0.06) 24%, rgba(255,248,245,0.14) 76%, #FFF8F5 100%)",
           }}
         />
-
-        {/* Bar Kategori Slider di Bagian Atas Hero */}
-        <div className="relative z-10 max-w-[1360px] w-full mx-auto px-4 sm:px-6 pt-6">
-          <CategorySlider
-            categories={availableCategories}
-            selectedCategory={selectedCategory}
-            onSelectCategory={(cat) => {
-              setSelectedCategory(cat);
-              scrollToSection("sorotan-utama");
-            }}
-            theme="hero"
-          />
-        </div>
 
         {/* Konten Pengantar Singkat & Ajakan Membaca Berita di Sisi Kiri */}
         <div className="relative z-10 max-w-[1360px] w-full mx-auto px-6 my-auto py-10">
