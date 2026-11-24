@@ -71,10 +71,16 @@ export default function TransparansiAksiPage() {
     const filteredActions = useMemo(() => {
         return actions.filter((item) => {
             if (filterStatus === "Semua") return true;
-            if (filterStatus === "Selesai" && item.statusType === "success") return true;
-            if (filterStatus === "Progres" && item.statusType === "progress") return true;
-            if (filterStatus === "Kajian" && item.statusType === "review") return true;
-            return true;
+            if (filterStatus === "Selesai") {
+                return item.statusType === "success" || item.status === "Selesai Diterapkan";
+            }
+            if (filterStatus === "Progres") {
+                return item.statusType === "progress" || item.status === "Dalam Progres";
+            }
+            if (filterStatus === "Kajian") {
+                return item.statusType === "review" || item.status === "Tahap Kajian Teknis";
+            }
+            return false;
         });
     }, [actions, filterStatus]);
 
@@ -172,12 +178,16 @@ export default function TransparansiAksiPage() {
 
                         <div className="space-y-4">
                             {/* Bar 1: Selesai */}
-                            <div>
+                            <div
+                                onClick={() => setFilterStatus(filterStatus === "Selesai" ? "Semua" : "Selesai")}
+                                className="cursor-pointer group/bar p-1.5 -mx-1.5 rounded-xl hover:bg-[#FFF8F5] transition-colors"
+                                title="Klik untuk filter status Selesai"
+                            >
                                 <div className="flex justify-between text-xs font-bold mb-1.5">
                                     <span className="text-emerald-700 flex items-center gap-1.5">
                                         <span className="w-2 h-2 rounded-full bg-emerald-500"></span> Selesai Diterapkan ({stats.selesaiPercent}%)
                                     </span>
-                                    <span className="text-[#574238]">{stats.selesaiCount} Isu</span>
+                                    <span className="text-[#574238] group-hover/bar:text-[#9B4000]">{stats.selesaiCount} Isu</span>
                                 </div>
                                 <div className="w-full bg-[#FFF8F5] h-3 rounded-full overflow-hidden border border-[#DEC0B3]/30 p-0.5">
                                     <div
@@ -188,12 +198,16 @@ export default function TransparansiAksiPage() {
                             </div>
 
                             {/* Bar 2: Progres */}
-                            <div>
+                            <div
+                                onClick={() => setFilterStatus(filterStatus === "Progres" ? "Semua" : "Progres")}
+                                className="cursor-pointer group/bar p-1.5 -mx-1.5 rounded-xl hover:bg-[#FFF8F5] transition-colors"
+                                title="Klik untuk filter status Progres"
+                            >
                                 <div className="flex justify-between text-xs font-bold mb-1.5">
                                     <span className="text-amber-700 flex items-center gap-1.5">
                                         <span className="w-2 h-2 rounded-full bg-amber-500"></span> Dalam Progres ({stats.progresPercent}%)
                                     </span>
-                                    <span className="text-[#574238]">{stats.progresCount} Isu</span>
+                                    <span className="text-[#574238] group-hover/bar:text-[#9B4000]">{stats.progresCount} Isu</span>
                                 </div>
                                 <div className="w-full bg-[#FFF8F5] h-3 rounded-full overflow-hidden border border-[#DEC0B3]/30 p-0.5">
                                     <div
@@ -204,12 +218,16 @@ export default function TransparansiAksiPage() {
                             </div>
 
                             {/* Bar 3: Kajian */}
-                            <div>
+                            <div
+                                onClick={() => setFilterStatus(filterStatus === "Kajian" ? "Semua" : "Kajian")}
+                                className="cursor-pointer group/bar p-1.5 -mx-1.5 rounded-xl hover:bg-[#FFF8F5] transition-colors"
+                                title="Klik untuk filter status Kajian"
+                            >
                                 <div className="flex justify-between text-xs font-bold mb-1.5">
                                     <span className="text-blue-700 flex items-center gap-1.5">
                                         <span className="w-2 h-2 rounded-full bg-blue-500"></span> Tahap Kajian Teknis ({stats.kajianPercent}%)
                                     </span>
-                                    <span className="text-[#574238]">{stats.kajianCount} Isu</span>
+                                    <span className="text-[#574238] group-hover/bar:text-[#9B4000]">{stats.kajianCount} Isu</span>
                                 </div>
                                 <div className="w-full bg-[#FFF8F5] h-3 rounded-full overflow-hidden border border-[#DEC0B3]/30 p-0.5">
                                     <div
