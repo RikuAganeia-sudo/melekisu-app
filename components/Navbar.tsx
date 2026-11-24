@@ -43,10 +43,16 @@ export default function Navbar() {
   const [mobileOpen, setMobileOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
   const [currentUser, setCurrentUser] = useState<NavUserProfile | null>(null);
+  const [pendingHref, setPendingHref] = useState<string | null>(null);
   const pathname = usePathname();
   const router = useRouter();
 
+  useEffect(() => {
+    setPendingHref(null);
+  }, [pathname]);
+
   const isActiveNav = (href: string) => {
+    if (pendingHref) return pendingHref === href;
     if (href === "/") return pathname === "/";
     return pathname?.startsWith(href);
   };
@@ -149,7 +155,8 @@ export default function Navbar() {
         <div className="flex items-center gap-5">
           <Link
             href="/"
-            className="flex items-center gap-2 text-xl font-bold tracking-tight text-[#9B4000] shrink-0"
+            onClick={() => setPendingHref("/")}
+            className="flex items-center gap-2 text-xl font-bold tracking-tight text-[#9B4000] shrink-0 active:scale-[0.98] transition-transform duration-200 ease-out"
           >
             <img
               src="/images/logo.png"
@@ -164,7 +171,7 @@ export default function Navbar() {
           {/* Desktop Kapsul Nav (Beranda, Berita, Transparansi Aksi) */}
           <nav
             aria-label="Navigasi Utama"
-            className="hidden md:flex items-center gap-1 rounded-full bg-[#EFECE8]/90 p-1 border border-[#DEC0B3]/50 shadow-2xs"
+            className="hidden md:flex items-center gap-1 rounded-full bg-[#FFF1E9]/90 p-1 border border-[#DEC0B3]/60 shadow-2xs"
           >
             {navLinks.map((link) => {
               const active = isActiveNav(link.href);
@@ -172,9 +179,10 @@ export default function Navbar() {
                 <Link
                   key={link.href}
                   href={link.href}
-                  className={`rounded-full px-4 py-1.5 text-sm font-medium transition-all duration-200 whitespace-nowrap ${active
-                      ? "bg-[#191C20] text-white font-semibold shadow-xs"
-                      : "text-[#4A4E54] hover:text-[#191C20] hover:bg-black/5"
+                  onClick={() => setPendingHref(link.href)}
+                  className={`rounded-full px-4 py-1.5 text-sm font-medium transition-all duration-300 ease-out active:scale-95 whitespace-nowrap select-none ${active
+                    ? "bg-[#9B4000] text-white font-semibold shadow-sm"
+                    : "text-[#574238] hover:text-[#9B4000] hover:bg-white/80"
                     }`}
                 >
                   {link.label}
@@ -184,27 +192,27 @@ export default function Navbar() {
           </nav>
         </div>
 
-        {/* Middle: Functional Search Bar with Clear (X) Button */}
+        {/* Middle: Oval Search Bar with Clear (X) Button */}
         <form
           onSubmit={handleSearchSubmit}
           className="hidden md:flex items-center flex-1 max-w-xs justify-end"
         >
           <div className="relative w-full">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
+            <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-[#8B7266]" />
 
             <input
               type="text"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               placeholder="Cari berita atau isu..."
-              className="w-full pl-9 pr-8 py-1.5 text-sm bg-white text-gray-800 placeholder-gray-400 rounded-lg border border-[#DEC0B3]/60 focus:outline-none focus:border-[#9B4000] focus:ring-1 focus:ring-[#9B4000] transition-all shadow-inner"
+              className="w-full pl-10 pr-8 py-1.5 text-sm bg-white text-[#28180C] placeholder-[#8B7266] rounded-full border border-[#DEC0B3]/70 focus:outline-none focus:border-[#9B4000] focus:ring-1 focus:ring-[#9B4000] transition-all shadow-inner"
             />
 
             {searchQuery && (
               <button
                 type="button"
                 onClick={handleClearSearch}
-                className="absolute right-2.5 top-1/2 -translate-y-1/2 text-gray-400 hover:text-[#9B4000] p-0.5 rounded-full hover:bg-gray-100 transition-colors cursor-pointer"
+                className="absolute right-2.5 top-1/2 -translate-y-1/2 text-[#8B7266] hover:text-[#9B4000] p-0.5 rounded-full hover:bg-[#FFF1E9] transition-colors cursor-pointer"
                 title="Hapus pencarian"
               >
                 <X className="h-3.5 w-3.5" />
@@ -218,9 +226,10 @@ export default function Navbar() {
           {currentUser ? (
             <Link
               href="/profil"
-              className="flex items-center gap-2.5 px-3 py-1.5 bg-white hover:bg-[#FFF1E9] text-[#28180C] rounded-full border border-[#DEC0B3]/60 transition-all shadow-xs group"
+              onClick={() => setPendingHref("/profil")}
+              className="flex items-center gap-2.5 px-3 py-1.5 bg-white hover:bg-[#FFF1E9] text-[#28180C] rounded-full border border-[#DEC0B3]/60 transition-all duration-300 ease-out active:scale-95 shadow-xs group"
             >
-              <div className="w-8 h-8 rounded-full bg-gradient-to-tr from-[#9B4000] to-[#FDB659] text-white flex items-center justify-center text-xs font-bold shadow-xs group-hover:scale-105 transition-transform">
+              <div className="w-8 h-8 rounded-full bg-gradient-to-tr from-[#9B4000] to-[#FDB659] text-white flex items-center justify-center text-xs font-bold shadow-xs group-hover:scale-105 transition-transform duration-200">
                 {currentUser.fullName
                   ? currentUser.fullName.charAt(0).toUpperCase()
                   : "W"}
@@ -241,14 +250,16 @@ export default function Navbar() {
             <>
               <Link
                 href="/masuk"
-                className="flex items-center gap-1.5 rounded-lg px-4 py-2 text-sm font-medium text-gray-600 transition-colors hover:bg-gray-100"
+                onClick={() => setPendingHref("/masuk")}
+                className="flex items-center gap-1.5 rounded-lg px-4 py-2 text-sm font-medium text-gray-600 transition-all duration-200 ease-out active:scale-95 hover:bg-gray-100"
               >
                 <LogIn className="h-4 w-4" />
                 Masuk
               </Link>
               <Link
                 href="/daftar"
-                className="flex items-center gap-1.5 rounded-lg bg-[#9B4000] px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-[#8C4A1E]"
+                onClick={() => setPendingHref("/daftar")}
+                className="flex items-center gap-1.5 rounded-lg bg-[#9B4000] px-4 py-2 text-sm font-medium text-white transition-all duration-200 ease-out active:scale-95 hover:bg-[#8C4A1E]"
               >
                 <User className="h-4 w-4" />
                 Daftar
@@ -260,7 +271,7 @@ export default function Navbar() {
         {/* Mobile Toggle */}
         <button
           onClick={() => setMobileOpen(!mobileOpen)}
-          className="rounded-lg p-2 text-gray-600 transition-colors hover:bg-gray-100 md:hidden"
+          className="rounded-lg p-2 text-gray-600 transition-all duration-200 ease-out active:scale-95 hover:bg-gray-100 md:hidden"
           aria-label={mobileOpen ? "Tutup menu" : "Buka menu"}
         >
           {mobileOpen ? (
@@ -273,23 +284,23 @@ export default function Navbar() {
 
       {/* Mobile Menu */}
       {mobileOpen && (
-        <div className="border-t border-[#DEC0B3]/40 bg-[#FFF8F5] md:hidden">
+        <div className="border-t border-[#DEC0B3]/40 bg-[#FFF8F5] md:hidden animate-in fade-in slide-in-from-top-1 duration-200">
           <div className="px-4 py-3">
-            {/* Mobile Search Bar with Clear Button */}
+            {/* Mobile Oval Search Bar with Clear Button */}
             <form onSubmit={handleSearchSubmit} className="relative w-full mb-3">
-              <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
+              <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-[#8B7266]" />
               <input
                 type="text"
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 placeholder="Cari berita..."
-                className="w-full pl-9 pr-8 py-2 text-sm bg-white text-gray-800 placeholder-gray-400 rounded-lg border border-[#DEC0B3]/60 focus:outline-none focus:border-[#9B4000]"
+                className="w-full pl-10 pr-8 py-2 text-sm bg-white text-[#28180C] placeholder-[#8B7266] rounded-full border border-[#DEC0B3]/70 focus:outline-none focus:border-[#9B4000] focus:ring-1 focus:ring-[#9B4000]"
               />
               {searchQuery && (
                 <button
                   type="button"
                   onClick={handleClearSearch}
-                  className="absolute right-2.5 top-1/2 -translate-y-1/2 text-gray-400 hover:text-[#9B4000] p-0.5 rounded-full hover:bg-gray-100 transition-colors cursor-pointer"
+                  className="absolute right-2.5 top-1/2 -translate-y-1/2 text-[#8B7266] hover:text-[#9B4000] p-0.5 rounded-full hover:bg-[#FFF1E9] transition-colors cursor-pointer"
                   title="Hapus pencarian"
                 >
                   <X className="h-4 w-4" />
@@ -304,10 +315,13 @@ export default function Navbar() {
                   <Link
                     key={link.href}
                     href={link.href}
-                    onClick={() => setMobileOpen(false)}
-                    className={`flex items-center gap-2 rounded-full px-4 py-2.5 text-sm font-medium transition-colors ${active
-                        ? "bg-[#191C20] text-white font-semibold"
-                        : "text-gray-700 hover:bg-[#FFF1E9] hover:text-[#9B4000]"
+                    onClick={() => {
+                      setPendingHref(link.href);
+                      setMobileOpen(false);
+                    }}
+                    className={`flex items-center gap-2 rounded-full px-4 py-2.5 text-sm font-medium transition-all duration-300 ease-out active:scale-[0.98] ${active
+                      ? "bg-[#9B4000] text-white font-semibold shadow-xs"
+                      : "text-[#574238] hover:bg-[#FFF1E9] hover:text-[#9B4000]"
                       }`}
                   >
                     {link.icon && <link.icon className="h-4 w-4" />}
@@ -320,8 +334,11 @@ export default function Navbar() {
               {currentUser ? (
                 <Link
                   href="/profil"
-                  onClick={() => setMobileOpen(false)}
-                  className="flex items-center justify-between rounded-lg bg-white px-3.5 py-2.5 text-sm font-bold text-[#28180C] border border-[#DEC0B3]/50 shadow-xs"
+                  onClick={() => {
+                    setPendingHref("/profil");
+                    setMobileOpen(false);
+                  }}
+                  className="flex items-center justify-between rounded-lg bg-white px-3.5 py-2.5 text-sm font-bold text-[#28180C] border border-[#DEC0B3]/50 transition-all duration-200 active:scale-[0.98] shadow-xs"
                 >
                   <div className="flex items-center gap-2">
                     <div className="w-7 h-7 rounded-full bg-gradient-to-tr from-[#9B4000] to-[#FDB659] text-white flex items-center justify-center text-xs font-bold">
@@ -340,16 +357,22 @@ export default function Navbar() {
                 <>
                   <Link
                     href="/masuk"
-                    onClick={() => setMobileOpen(false)}
-                    className="flex items-center gap-2 rounded-lg px-3 py-2.5 text-sm font-medium text-gray-700 transition-colors hover:bg-gray-100"
+                    onClick={() => {
+                      setPendingHref("/masuk");
+                      setMobileOpen(false);
+                    }}
+                    className="flex items-center gap-2 rounded-lg px-3 py-2.5 text-sm font-medium text-gray-700 transition-all duration-200 active:scale-[0.98] hover:bg-gray-100"
                   >
                     <LogIn className="h-4 w-4" />
                     Masuk
                   </Link>
                   <Link
                     href="/daftar"
-                    onClick={() => setMobileOpen(false)}
-                    className="flex items-center gap-2 rounded-lg bg-[#9B4000] px-3 py-2.5 text-center text-sm font-medium text-white transition-colors hover:bg-[#8C4A1E] justify-center"
+                    onClick={() => {
+                      setPendingHref("/daftar");
+                      setMobileOpen(false);
+                    }}
+                    className="flex items-center gap-2 rounded-lg bg-[#9B4000] px-3 py-2.5 text-center text-sm font-medium text-white transition-all duration-200 active:scale-[0.98] hover:bg-[#8C4A1E] justify-center"
                   >
                     <User className="h-4 w-4" />
                     Daftar
