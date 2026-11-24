@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useRef, useState, useEffect, useCallback } from "react";
+import React, { useRef, useState, useEffect, useCallback, useMemo } from "react";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 
 interface CategorySliderProps {
@@ -29,8 +29,8 @@ export default function CategorySlider({
         const el = scrollContainerRef.current;
         if (!el) return;
         const { scrollLeft, scrollWidth, clientWidth } = el;
-        setCanScrollLeft(scrollLeft > 6);
-        setCanScrollRight(scrollLeft < scrollWidth - clientWidth - 6);
+        setCanScrollLeft(scrollLeft > 8);
+        setCanScrollRight(scrollLeft < scrollWidth - clientWidth - 8);
     }, []);
 
     useEffect(() => {
@@ -99,43 +99,60 @@ export default function CategorySlider({
         });
     };
 
-    const isHero = theme === "hero";
-    const bgGradientLeft = isHero
-        ? "from-[#FFF8F5] via-[#FFF8F5]/90 to-transparent"
-        : "from-[#FFF8F5] via-[#FFF8F5]/90 to-transparent";
-    const bgGradientRight = isHero
-        ? "from-transparent via-[#FFF8F5]/90 to-[#FFF8F5]"
-        : "from-transparent via-[#FFF8F5]/90 to-[#FFF8F5]";
+    // Efek fade alami menggunakan CSS mask-image (tidak merusak background foto maupun gradasi)
+    const maskStyle = useMemo(() => {
+        if (canScrollLeft && canScrollRight) {
+            return {
+                maskImage: "linear-gradient(to right, transparent 0%, black 48px, black calc(100% - 48px), transparent 100%)",
+                WebkitMaskImage: "linear-gradient(to right, transparent 0%, black 48px, black calc(100% - 48px), transparent 100%)",
+            };
+        }
+        if (canScrollRight) {
+            return {
+                maskImage: "linear-gradient(to right, black calc(100% - 48px), transparent 100%)",
+                WebkitMaskImage: "linear-gradient(to right, black calc(100% - 48px), transparent 100%)",
+            };
+        }
+        if (canScrollLeft) {
+            return {
+                maskImage: "linear-gradient(to right, transparent 0%, black 48px, black 100%)",
+                WebkitMaskImage: "linear-gradient(to right, transparent 0%, black 48px, black 100%)",
+            };
+        }
+        return {};
+    }, [canScrollLeft, canScrollRight]);
 
     return (
         <div className="relative w-full group select-none">
-            {/* Tombol Geser Kiri + Efek Fade */}
+            {/* Tombol Geser Kiri Melayang Rapi (Floating Glassmorphism) */}
             {canScrollLeft && (
-                <div
-                    className={`absolute left-0 top-0 bottom-0 z-20 flex items-center pr-6 pl-1 bg-gradient-to-r ${bgGradientLeft} pointer-events-none transition-opacity duration-200`}
-                >
+                <div className="absolute left-0 top-1/2 -translate-y-1/2 z-30 flex items-center pl-0.5 animate-in fade-in duration-200">
                     <button
                         type="button"
                         onClick={() => handleSlide("left")}
                         aria-label="Geser ke kiri"
-                        className="pointer-events-auto p-1.5 rounded-full bg-white text-[#9B4000] border border-[#DEC0B3]/70 shadow-md hover:bg-[#FFE3D1] hover:scale-105 active:scale-95 transition-all cursor-pointer"
+                        className="w-8 h-8 rounded-full bg-white/95 backdrop-blur-md text-[#9B4000] border border-[#DEC0B3]/80 shadow-md hover:shadow-lg hover:bg-white hover:scale-110 active:scale-95 transition-all flex items-center justify-center cursor-pointer"
                     >
                         <ChevronLeft className="w-4 h-4 stroke-[2.5]" />
                     </button>
                 </div>
             )}
 
-            {/* Container List Kategori yang Bisa Di-slide */}
+            {/* Container List Kategori dengan Mask Transparan Alami */}
             <div
                 ref={scrollContainerRef}
                 onMouseDown={handleMouseDown}
                 onMouseMove={handleMouseMove}
                 onMouseUp={handleMouseUpOrLeave}
                 onMouseLeave={handleMouseUpOrLeave}
-                className={`flex items-center gap-2 overflow-x-auto w-full py-1 px-1 scroll-smooth scrollbar-none ${
+                className={`flex items-center gap-2 overflow-x-auto w-full py-1.5 px-1 scroll-smooth scrollbar-none ${
                     isDragging ? "cursor-grabbing" : "cursor-grab"
                 }`}
-                style={{ scrollbarWidth: "none", msOverflowStyle: "none" }}
+                style={{
+                    scrollbarWidth: "none",
+                    msOverflowStyle: "none",
+                    ...maskStyle,
+                }}
             >
                 {categories.map((cat) => {
                     const isSelected = selectedCategory === cat;
@@ -146,7 +163,7 @@ export default function CategorySlider({
                             onClick={(e) => handlePillClick(cat, e)}
                             className={`px-4 py-1.5 rounded-full text-xs font-bold transition-all whitespace-nowrap shadow-2xs shrink-0 cursor-pointer border ${
                                 isSelected
-                                    ? "bg-[#9B4000] text-white border-[#9B4000] shadow-sm"
+                                    ? "bg-[#9B4000] text-white border-[#9B4000] shadow-sm ring-2 ring-[#9B4000]/20"
                                     : "bg-white text-[#574238] border-[#DEC0B3]/60 hover:bg-[#FFE3D1] hover:text-[#9B4000]"
                             }`}
                         >
@@ -156,16 +173,14 @@ export default function CategorySlider({
                 })}
             </div>
 
-            {/* Tombol Geser Kanan + Efek Fade */}
+            {/* Tombol Geser Kanan Melayang Rapi (Floating Glassmorphism) */}
             {canScrollRight && (
-                <div
-                    className={`absolute right-0 top-0 bottom-0 z-20 flex items-center pl-6 pr-1 bg-gradient-to-l ${bgGradientRight} pointer-events-none transition-opacity duration-200`}
-                >
+                <div className="absolute right-0 top-1/2 -translate-y-1/2 z-30 flex items-center pr-0.5 animate-in fade-in duration-200">
                     <button
                         type="button"
                         onClick={() => handleSlide("right")}
                         aria-label="Geser ke kanan"
-                        className="pointer-events-auto p-1.5 rounded-full bg-white text-[#9B4000] border border-[#DEC0B3]/70 shadow-md hover:bg-[#FFE3D1] hover:scale-105 active:scale-95 transition-all cursor-pointer"
+                        className="w-8 h-8 rounded-full bg-white/95 backdrop-blur-md text-[#9B4000] border border-[#DEC0B3]/80 shadow-md hover:shadow-lg hover:bg-white hover:scale-110 active:scale-95 transition-all flex items-center justify-center cursor-pointer"
                     >
                         <ChevronRight className="w-4 h-4 stroke-[2.5]" />
                     </button>
