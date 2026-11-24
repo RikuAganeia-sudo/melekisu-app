@@ -481,7 +481,7 @@ export default function HomePage() {
             [-webkit-mask-image:linear-gradient(to_right,transparent_0%,rgba(0,0,0,0.35)_24%,rgba(0,0,0,0.85)_52%,black_100%)]
           "
           style={{
-            backgroundImage: "url('/images/jakarta-senja.jpg')",
+            backgroundImage: "url('/images/jakarta.jpg')",
           }}
         />
 
@@ -796,8 +796,8 @@ export default function HomePage() {
                   <button
                     onClick={handleLikeClick}
                     className={`flex items-center gap-1.5 font-semibold px-3 py-1.5 rounded-xl transition-all cursor-pointer ${hasLiked
-                        ? "bg-[#9B4000] text-white shadow-sm"
-                        : "bg-[#FFF1E9] text-[#574238] hover:text-[#9B4000]"
+                      ? "bg-[#9B4000] text-white shadow-sm"
+                      : "bg-[#FFF1E9] text-[#574238] hover:text-[#9B4000]"
                       }`}
                   >
                     <ThumbsUp
@@ -999,10 +999,10 @@ export default function HomePage() {
           <div className="bg-white rounded-3xl max-w-sm w-full p-6 shadow-2xl border border-[#DEC0B3]/40 flex flex-col items-center text-center gap-4">
             <div
               className={`w-14 h-14 rounded-full flex items-center justify-center shadow-inner ${userAlert.type === "error"
-                  ? "bg-rose-50 text-rose-600 border border-rose-200"
-                  : userAlert.type === "success"
-                    ? "bg-emerald-50 text-emerald-600 border border-emerald-200"
-                    : "bg-amber-50 text-amber-700 border border-amber-200"
+                ? "bg-rose-50 text-rose-600 border border-rose-200"
+                : userAlert.type === "success"
+                  ? "bg-emerald-50 text-emerald-600 border border-emerald-200"
+                  : "bg-amber-50 text-amber-700 border border-amber-200"
                 }`}
             >
               <AlertCircle className="w-8 h-8" />
