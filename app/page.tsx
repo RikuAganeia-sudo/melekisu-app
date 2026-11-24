@@ -518,16 +518,16 @@ export default function HomePage() {
         <div className="relative z-10 max-w-[1360px] w-full mx-auto px-6 my-auto py-10">
           <div className="max-w-xl space-y-4">
             <h1 className="font-serif text-4xl sm:text-5xl lg:text-[54px] font-bold leading-[1.12] tracking-tight text-[#28180C]">
-              Jelajahi Nadi{" "}
+              Mengurai Isu{" "}
               <span className="text-[#9B4000] font-normal italic">
-                Kebijakan Publik.
+                Menyuarakan Gagasan.
               </span>
             </h1>
 
             <p className="text-sm sm:text-base text-[#574238] leading-relaxed max-w-lg">
               <strong className="font-bold text-[#28180C]">MelekIsu</strong>{" "}
               hadir untuk membedah kebijakan, menyajikan data, dan mendorong
-              transparansi. Temukan fakta di balik isu terkini dan mulai baca
+              transparansi kepada warga. Temukan fakta di balik isu terkini dan mulai baca
               kajian untuk mengambil peran dalam diskursus warga.
             </p>
 
