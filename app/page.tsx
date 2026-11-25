@@ -988,43 +988,34 @@ export default function HomePage() {
           </section>
         )}
 
-        {/* Banner Navigasi ke Arsip Berita Lengkap */}
+        {/* Navigasi Halus ke Arsip Berita Lengkap (Subtle Hairline & Capsule Pill) */}
         {allLatestNews.length > 0 && (
-          <div className="mt-8 rounded-3xl p-6 sm:p-8 bg-gradient-to-r from-[#FFF1E9] via-[#FFDDC9]/30 to-[#FFF8F5] border border-[#DEC0B3]/60 shadow-xs flex flex-col md:flex-row items-center justify-between gap-6 relative overflow-hidden reveal-on-scroll">
-            <div className="absolute -right-8 -bottom-8 w-44 h-44 bg-[#FDB659]/15 rounded-full blur-2xl pointer-events-none" />
-
-            <div className="flex flex-col sm:flex-row items-center sm:items-start text-center sm:text-left gap-4 relative z-10">
-              <div className="w-13 h-13 rounded-2xl bg-[#9B4000] text-white flex items-center justify-center shadow-md shadow-[#9B4000]/20 shrink-0">
-                <Newspaper className="w-6 h-6" />
-              </div>
-              <div>
-                <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full text-[11px] font-extrabold bg-[#9B4000]/10 text-[#9B4000] mb-2 border border-[#9B4000]/15">
-                  <span>Katalog Arsip Berita</span>
-                  <span className="w-1.5 h-1.5 rounded-full bg-[#9B4000]" />
-                  <span>+{Math.max(0, allLatestNews.length + 1 - latestNews.length)} Berita Lainnya</span>
-                </div>
-                <h3 className="text-lg sm:text-xl font-extrabold text-[#28180C] tracking-tight">
-                  Ingin Menelusuri Lebih Banyak Isu Kebijakan?
-                </h3>
-                <p className="text-xs sm:text-sm text-[#574238] mt-1 max-w-xl leading-relaxed">
-                  Buka katalog lengkap berita nasional, komparasi data kebijakan antar sektor, serta rekam jejak aspirasi warga terverifikasi.
-                </p>
-              </div>
+          <div className="relative py-10 flex items-center justify-center reveal-on-scroll">
+            {/* Garis pemisah tipis halus */}
+            <div className="absolute inset-0 flex items-center" aria-hidden="true">
+              <div className="w-full border-t border-[#DEC0B3]/40" />
             </div>
 
-            <Link
-              href={
-                searchKeyword
-                  ? `/berita?search=${encodeURIComponent(searchKeyword)}`
-                  : selectedCategory !== "Semua"
-                  ? `/berita?category=${encodeURIComponent(selectedCategory)}`
-                  : "/berita"
-              }
-              className="inline-flex items-center justify-center gap-2.5 px-6 py-3.5 rounded-2xl bg-gradient-to-r from-[#9B4000] to-[#B34B00] hover:from-[#8C4A1E] hover:to-[#9B4000] text-white font-bold text-xs sm:text-sm shadow-md hover:shadow-lg transition-all duration-300 hover:scale-[1.02] active:scale-95 shrink-0 group cursor-pointer relative z-10"
-            >
-              <span>Buka Halaman Berita Lengkap</span>
-              <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform duration-200" />
-            </Link>
+            {/* Kapsul minimalis terpadu */}
+            <div className="relative flex justify-center">
+              <Link
+                href={
+                  searchKeyword
+                    ? `/berita?search=${encodeURIComponent(searchKeyword)}`
+                    : selectedCategory !== "Semua"
+                    ? `/berita?category=${encodeURIComponent(selectedCategory)}`
+                    : "/berita"
+                }
+                className="inline-flex items-center gap-2.5 px-5 py-2.5 rounded-full bg-[#FFF8F5] hover:bg-[#FFF1E9] text-[#574238] hover:text-[#9B4000] border border-[#DEC0B3]/70 hover:border-[#9B4000]/40 text-xs font-semibold shadow-2xs hover:shadow-xs transition-all duration-200 group active:scale-95"
+              >
+                <span>Lihat seluruh berita & arsip</span>
+                <span className="w-1 h-1 rounded-full bg-[#DEC0B3]" />
+                <span className="px-2 py-0.5 rounded-full bg-[#FFE3D1] text-[#9B4000] text-[10px] font-bold">
+                  {allLatestNews.length + 1} artikel
+                </span>
+                <ArrowRight className="w-3.5 h-3.5 text-[#9B4000] group-hover:translate-x-0.5 transition-transform duration-200" />
+              </Link>
+            </div>
           </div>
         )}
       </main>
