@@ -253,9 +253,19 @@ export default function HomePage() {
     });
   }, [newsList, selectedCategory, searchKeyword]);
 
+  const HOMEPAGE_NEWS_LIMIT = 6;
+
   const featuredNews = filteredNews[0] || newsList[0];
-  const latestNews =
-    selectedCategory === "Semua" ? filteredNews.slice(1) : filteredNews;
+
+  const allLatestNews = useMemo(() => {
+    return selectedCategory === "Semua" ? filteredNews.slice(1) : filteredNews;
+  }, [filteredNews, selectedCategory]);
+
+  const latestNews = useMemo(() => {
+    return allLatestNews.slice(0, HOMEPAGE_NEWS_LIMIT);
+  }, [allLatestNews]);
+
+  const hasMoreNews = allLatestNews.length > HOMEPAGE_NEWS_LIMIT;
 
   // 2. Sinkronisasi data interaktif berita featured saat berita berubah
   useEffect(() => {
@@ -975,6 +985,30 @@ export default function HomePage() {
               </article>
             ))}
           </section>
+        )}
+
+        {/* Tombol Akses Seluruh Berita Lengkap */}
+        {allLatestNews.length > 0 && (
+          <div className="flex flex-col items-center justify-center pt-4 pb-2 reveal-on-scroll">
+            <Link
+              href={
+                searchKeyword
+                  ? `/berita?search=${encodeURIComponent(searchKeyword)}`
+                  : selectedCategory !== "Semua"
+                  ? `/berita?category=${encodeURIComponent(selectedCategory)}`
+                  : "/berita"
+              }
+              className="inline-flex items-center gap-2 px-6 py-3 rounded-2xl bg-white hover:bg-[#FFF1E9] text-[#9B4000] border border-[#DEC0B3]/80 hover:border-[#9B4000] font-bold text-xs sm:text-sm shadow-xs hover:shadow-md transition-all duration-300 active:scale-95 group"
+            >
+              <span>Buka Seluruh Berita & Isu Kebijakan</span>
+              <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+            </Link>
+            {hasMoreNews && (
+              <span className="text-[11px] text-[#8B7266] mt-2 font-medium">
+                Menampilkan {latestNews.length} berita terbaru pilihan dari total {allLatestNews.length + 1} berita
+              </span>
+            )}
+          </div>
         )}
       </main>
 

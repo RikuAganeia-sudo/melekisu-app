@@ -103,8 +103,9 @@ function parseNewsTimestamp(item: NewsItem): number {
 function BeritaContent() {
     const searchParams = useSearchParams();
     const searchQuery = searchParams.get("search") || "";
+    const categoryQuery = searchParams.get("category") || "Semua";
 
-    const [selectedCategory, setSelectedCategory] = useState("Semua");
+    const [selectedCategory, setSelectedCategory] = useState(categoryQuery);
     const [sortBy, setSortBy] = useState<"terbaru" | "populer" | "diskusi">("terbaru");
     const [newsData, setNewsData] = useState<NewsItem[]>([]);
     const [activeCommentBox, setActiveCommentBox] = useState<string | null>(null);
