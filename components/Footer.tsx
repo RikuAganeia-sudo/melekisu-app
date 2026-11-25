@@ -86,7 +86,7 @@ export default function Footer() {
 
         {/* Bottom */}
         <div className="mt-10 border-t border-gray-200 pt-6 text-center text-xs text-gray-400">
-          © {COPYRIGHT_YEAR} WartaGagasan. Semua hak dilindungi.
+          © {COPYRIGHT_YEAR} MelekIsu. Semua hak dilindungi.
           <br />
           <span className="mt-1 inline-block">
             Data demo untuk pengembangan — bukan sumber berita resmi.
