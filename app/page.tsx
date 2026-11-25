@@ -25,6 +25,7 @@ import {
   Bot,
   Search,
   X,
+  Newspaper,
 } from "lucide-react";
 
 function matchCategory(itemCategory: any, selected: string): boolean {
@@ -987,9 +988,30 @@ export default function HomePage() {
           </section>
         )}
 
-        {/* Tombol Akses Seluruh Berita Lengkap */}
+        {/* Banner Navigasi ke Arsip Berita Lengkap */}
         {allLatestNews.length > 0 && (
-          <div className="flex flex-col items-center justify-center pt-4 pb-2 reveal-on-scroll">
+          <div className="mt-8 rounded-3xl p-6 sm:p-8 bg-gradient-to-r from-[#FFF1E9] via-[#FFDDC9]/30 to-[#FFF8F5] border border-[#DEC0B3]/60 shadow-xs flex flex-col md:flex-row items-center justify-between gap-6 relative overflow-hidden reveal-on-scroll">
+            <div className="absolute -right-8 -bottom-8 w-44 h-44 bg-[#FDB659]/15 rounded-full blur-2xl pointer-events-none" />
+
+            <div className="flex flex-col sm:flex-row items-center sm:items-start text-center sm:text-left gap-4 relative z-10">
+              <div className="w-13 h-13 rounded-2xl bg-[#9B4000] text-white flex items-center justify-center shadow-md shadow-[#9B4000]/20 shrink-0">
+                <Newspaper className="w-6 h-6" />
+              </div>
+              <div>
+                <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full text-[11px] font-extrabold bg-[#9B4000]/10 text-[#9B4000] mb-2 border border-[#9B4000]/15">
+                  <span>Katalog Arsip Berita</span>
+                  <span className="w-1.5 h-1.5 rounded-full bg-[#9B4000]" />
+                  <span>+{Math.max(0, allLatestNews.length + 1 - latestNews.length)} Berita Lainnya</span>
+                </div>
+                <h3 className="text-lg sm:text-xl font-extrabold text-[#28180C] tracking-tight">
+                  Ingin Menelusuri Lebih Banyak Isu Kebijakan?
+                </h3>
+                <p className="text-xs sm:text-sm text-[#574238] mt-1 max-w-xl leading-relaxed">
+                  Buka katalog lengkap berita nasional, komparasi data kebijakan antar sektor, serta rekam jejak aspirasi warga terverifikasi.
+                </p>
+              </div>
+            </div>
+
             <Link
               href={
                 searchKeyword
@@ -998,16 +1020,11 @@ export default function HomePage() {
                   ? `/berita?category=${encodeURIComponent(selectedCategory)}`
                   : "/berita"
               }
-              className="inline-flex items-center gap-2 px-6 py-3 rounded-2xl bg-white hover:bg-[#FFF1E9] text-[#9B4000] border border-[#DEC0B3]/80 hover:border-[#9B4000] font-bold text-xs sm:text-sm shadow-xs hover:shadow-md transition-all duration-300 active:scale-95 group"
+              className="inline-flex items-center justify-center gap-2.5 px-6 py-3.5 rounded-2xl bg-gradient-to-r from-[#9B4000] to-[#B34B00] hover:from-[#8C4A1E] hover:to-[#9B4000] text-white font-bold text-xs sm:text-sm shadow-md hover:shadow-lg transition-all duration-300 hover:scale-[1.02] active:scale-95 shrink-0 group cursor-pointer relative z-10"
             >
-              <span>Buka Seluruh Berita & Isu Kebijakan</span>
-              <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+              <span>Buka Halaman Berita Lengkap</span>
+              <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform duration-200" />
             </Link>
-            {hasMoreNews && (
-              <span className="text-[11px] text-[#8B7266] mt-2 font-medium">
-                Menampilkan {latestNews.length} berita terbaru pilihan dari total {allLatestNews.length + 1} berita
-              </span>
-            )}
           </div>
         )}
       </main>
