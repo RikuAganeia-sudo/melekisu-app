@@ -10,7 +10,6 @@ import {
     Bot,
     User,
     RotateCcw,
-    Sparkles,
     FileText,
     ArrowUpRight,
     ExternalLink,
@@ -347,7 +346,7 @@ function AIChatWidgetInner() {
                                     </span>
                                 </div>
                                 <span className="text-[10.5px] text-[#FFDDC9] font-medium flex items-center gap-1">
-                                    <Sparkles className="w-2.5 h-2.5 text-[#FDB659]" />
+                                    <Bot className="w-2.5 h-2.5 text-[#FDB659]" />
                                     Terkoneksi Berita & Kebijakan Publik
                                 </span>
                             </div>
@@ -448,7 +447,7 @@ function AIChatWidgetInner() {
                     {/* Chips Rekomendasi Pertanyaan Cepat */}
                     <div className="bg-white/95 border-t border-[#DEC0B3]/40 px-3 py-2 flex items-center gap-1.5 overflow-x-auto no-scrollbar">
                         <span className="text-[10px] text-[#8B7266] font-bold shrink-0 flex items-center gap-1">
-                            <Sparkles className="w-3 h-3 text-[#9B4000]" /> Cepat:
+                            <MessageSquare className="w-3 h-3 text-[#9B4000]" /> Cepat:
                         </span>
                         {quickPrompts.map((prompt, idx) => (
                             <button

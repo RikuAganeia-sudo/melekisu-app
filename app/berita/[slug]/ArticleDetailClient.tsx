@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import Link from "next/link";
-import { ArrowLeft, MessageSquare, ThumbsUp, Send, AlertCircle, Building2, Calendar, Clock, CheckCircle2, HelpCircle, FileText, Bot, Sparkles, Zap, Users, Search } from "lucide-react";
+import { ArrowLeft, MessageSquare, ThumbsUp, Send, AlertCircle, Building2, Calendar, Clock, CheckCircle2, HelpCircle, FileText, Bot, Zap, Users, Search } from "lucide-react";
 import { getCombinedNews, getCommentsForSlug, sendComment, isTextViolating, toggleCommentUpvote, getCommentUpvoteCount, isCommentUpvotedByUser } from "@/lib/newsService";
 import { NewsItem, NewsComment } from "@/data/news";
 import { getCategoryCoverImage } from "@/lib/policyDatasets";
@@ -364,7 +364,7 @@ export default function ArticleDetailClient({ slug }: { slug: string }) {
                                 className="flex items-center gap-1.5 px-3.5 py-2 rounded-xl text-xs font-bold bg-[#FFF1E9] text-[#9B4000] border border-[#DEC0B3]/70 hover:bg-[#FFDDC9] transition-all cursor-pointer shadow-xs active:scale-95"
                                 title="Tanya AI tentang artikel ini"
                             >
-                                <Sparkles className="w-3.5 h-3.5 text-[#9B4000]" />
+                                <Bot className="w-3.5 h-3.5 text-[#9B4000]" />
                                 <span>Tanya AI</span>
                             </button>
 
@@ -397,7 +397,7 @@ export default function ArticleDetailClient({ slug }: { slug: string }) {
                                         Tanya Asisten AI tentang Berita Ini
                                     </h3>
                                     <span className="text-[10px] bg-[#9B4000] text-white font-bold px-2 py-0.5 rounded-full uppercase tracking-wider flex items-center gap-1">
-                                        <Sparkles className="w-2.5 h-2.5 text-[#FDB659]" /> MelekIsu AI
+                                        <Bot className="w-2.5 h-2.5 text-[#FDB659]" /> MelekIsu AI
                                     </span>
                                 </div>
                                 <p className="text-xs text-[#574238] leading-relaxed">
@@ -609,7 +609,7 @@ export default function ArticleDetailClient({ slug }: { slug: string }) {
                                 onClick={handleConfirmSend}
                                 className="flex-1 py-3 px-4 bg-[#9B4000] hover:bg-[#8C4A1E] text-white text-xs font-bold rounded-xl shadow-md transition-all cursor-pointer flex items-center justify-center gap-1.5"
                             >
-                                <Sparkles className="w-3.5 h-3.5" />
+                                <Send className="w-3.5 h-3.5" />
                                 <span>Kirim & Verifikasi AI</span>
                             </button>
                         </div>

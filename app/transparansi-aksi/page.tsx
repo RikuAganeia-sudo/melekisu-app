@@ -15,7 +15,6 @@ import {
     TrendingUp,
     BarChart3,
     ShieldCheck,
-    Sparkles,
     Layers,
     Inbox
 } from "lucide-react";
@@ -118,7 +117,7 @@ export default function TransparansiAksiPage() {
 
                     <div className="flex items-start gap-4 relative z-10">
                         <div className="w-12 h-12 rounded-2xl bg-[#9B4000] text-white flex items-center justify-center shadow-md shrink-0">
-                            <Sparkles className="w-6 h-6" />
+                            <Building2 className="w-6 h-6" />
                         </div>
                         <div>
                             <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[11px] font-extrabold bg-[#9B4000]/10 text-[#9B4000] mb-2">

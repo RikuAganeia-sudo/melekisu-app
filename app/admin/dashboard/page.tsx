@@ -15,7 +15,6 @@ import {
     X,
     FileText,
     Bot,
-    Sparkles,
     AlertCircle,
     Zap,
     Database,
@@ -742,7 +741,7 @@ export default function AdminDashboardPage() {
                         }}
                         className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-gradient-to-r from-[#7C2D12] via-[#9B4000] to-[#D97706] text-white text-xs font-extrabold shadow-md hover:scale-105 active:scale-95 transition-all cursor-pointer border border-amber-400/30"
                     >
-                        <Sparkles className="w-4 h-4 text-amber-200 animate-pulse" />
+                        <Bot className="w-4 h-4 text-amber-200" />
                         <span>Auto-Publish Berita AI</span>
                     </button>
 
@@ -1145,7 +1144,7 @@ export default function AdminDashboardPage() {
                                         className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-amber-100 hover:bg-amber-200 text-amber-900 text-[10px] font-bold transition-colors cursor-pointer disabled:opacity-40"
                                         title="Ketikkan topik ringkas di judul, lalu klik untuk auto-lengkapi seluruh formulir dengan AI"
                                     >
-                                        <Sparkles className={`w-3 h-3 text-amber-600 ${isAIAssisting ? "animate-spin" : ""}`} />
+                                        <Bot className={`w-3.5 h-3.5 text-amber-600 ${isAIAssisting ? "animate-spin" : ""}`} />
                                         <span>{isAIAssisting ? "AI Menyusun..." : "Auto-Lengkapi dengan AI"}</span>
                                     </button>
                                 </div>
@@ -1318,7 +1317,7 @@ export default function AdminDashboardPage() {
                         <div className="flex items-start justify-between border-b border-[#DEC0B3]/30 pb-4">
                             <div className="flex items-center gap-3">
                                 <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-[#7C2D12] to-[#B34B00] text-white flex items-center justify-center shadow-md shadow-[#9B4000]/20 shrink-0">
-                                    <Sparkles className="w-6 h-6 text-amber-300" />
+                                    <Bot className="w-6 h-6 text-amber-300" />
                                 </div>
                                 <div>
                                     <div className="flex items-center gap-2">
@@ -1408,7 +1407,7 @@ export default function AdminDashboardPage() {
                                             : "text-[#73594B] hover:text-[#28180C]"
                                     }`}
                                 >
-                                    <Sparkles className="w-3.5 h-3.5" />
+                                    <FileText className="w-3.5 h-3.5" />
                                     <span>Topik Kustom</span>
                                 </button>
                             </div>
@@ -1699,7 +1698,7 @@ export default function AdminDashboardPage() {
                             </div>
                         ) : (
                             <div className="w-16 h-16 rounded-full bg-amber-50 text-[#9B4000] flex items-center justify-center shadow-inner border border-amber-100">
-                                <Sparkles className="w-9 h-9 text-[#9B4000]" />
+                                <Bot className="w-9 h-9 text-[#9B4000]" />
                             </div>
                         )}
 

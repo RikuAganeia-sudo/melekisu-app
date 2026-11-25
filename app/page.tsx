@@ -23,7 +23,6 @@ import {
   Send,
   AlertCircle,
   Bot,
-  Sparkles,
   Search,
   X,
 } from "lucide-react";
@@ -815,7 +814,7 @@ export default function HomePage() {
                     className="px-3.5 py-2 bg-[#FFF1E9] hover:bg-[#FFDDC9] text-[#9B4000] font-bold text-xs rounded-xl border border-[#DEC0B3]/60 shadow-2xs transition-all flex items-center gap-1.5 cursor-pointer active:scale-95"
                     title="Tanya AI tentang berita sorotan ini"
                   >
-                    <Sparkles className="w-3.5 h-3.5 text-[#9B4000]" />
+                    <Bot className="w-3.5 h-3.5 text-[#9B4000]" />
                     <span>Tanya AI</span>
                   </button>
 
@@ -961,7 +960,7 @@ export default function HomePage() {
                     className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-[11px] font-bold bg-[#FFF1E9] text-[#9B4000] hover:bg-[#FFDDC9] border border-[#DEC0B3]/50 transition-all cursor-pointer active:scale-95 shadow-2xs"
                     title="Tanya AI tentang berita ini"
                   >
-                    <Sparkles className="w-3 h-3 text-[#9B4000]" />
+                    <Bot className="w-3 h-3 text-[#9B4000]" />
                     <span>Tanya AI</span>
                   </button>
 
@@ -1052,7 +1051,7 @@ export default function HomePage() {
                   </>
                 ) : (
                   <>
-                    <Sparkles className="w-3.5 h-3.5" />
+                    <Send className="w-3.5 h-3.5" />
                     <span>Kirim & Verifikasi AI</span>
                   </>
                 )}

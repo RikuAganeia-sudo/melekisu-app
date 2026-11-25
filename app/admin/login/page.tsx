@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
-import { ShieldCheck, Lock, Mail, ArrowRight, AlertCircle, Eye, EyeOff, Sparkles } from "lucide-react";
+import { ShieldCheck, Lock, Mail, ArrowRight, AlertCircle, Eye, EyeOff } from "lucide-react";
 
 export default function AdminLoginPage() {
     const router = useRouter();
@@ -93,7 +93,7 @@ export default function AdminLoginPage() {
                         </div>
                         <div>
                             <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[10px] font-extrabold bg-[#FDB659]/10 text-[#FDB659] mb-1.5 border border-[#FDB659]/20">
-                                <Sparkles className="w-3 h-3" /> Panel Terproteksi
+                                <Lock className="w-3 h-3" /> Panel Terproteksi
                             </div>
                             <h1 className="text-2xl font-extrabold text-white tracking-tight">Masuk Sebagai Admin</h1>
                             <p className="text-xs text-[#DEC0B3] mt-1 leading-relaxed">
