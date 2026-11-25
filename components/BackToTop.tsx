@@ -35,10 +35,14 @@ export default function BackToTop() {
   }, []);
 
   const scrollToTop = () => {
-    window.scrollTo({
-      top: 0,
-      behavior: "smooth",
-    });
+    if (typeof window !== "undefined" && (window as any).__lenis) {
+      (window as any).__lenis.scrollTo(0, { duration: 1.2 });
+    } else {
+      window.scrollTo({
+        top: 0,
+        behavior: "smooth",
+      });
+    }
   };
 
   // Lingkaran SVG Progres: Radius 16 -> circumference = 2 * PI * 16 ≈ 100.53
