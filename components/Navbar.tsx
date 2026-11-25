@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import {
@@ -44,33 +44,42 @@ export default function Navbar() {
   const [searchQuery, setSearchQuery] = useState("");
   const [currentUser, setCurrentUser] = useState<NavUserProfile | null>(null);
   const [pendingHref, setPendingHref] = useState<string | null>(null);
-  const [scrollProgress, setScrollProgress] = useState(0);
+  const progressBarRef = useRef<HTMLDivElement>(null);
   const pathname = usePathname();
   const router = useRouter();
 
-  // Pantau posisi scroll untuk membaca progress bar di bawah navbar
+  // Pantau posisi scroll secara real-time langsung ke DOM tanpa lag/delay
   useEffect(() => {
-    let ticking = false;
-    const handleScroll = () => {
-      if (!ticking) {
-        window.requestAnimationFrame(() => {
-          const totalHeight = document.documentElement.scrollHeight - window.innerHeight;
-          if (totalHeight > 0) {
-            const currentProgress = (window.scrollY / totalHeight) * 100;
-            setScrollProgress(Math.min(100, Math.max(0, currentProgress)));
-          } else {
-            setScrollProgress(0);
-          }
-          ticking = false;
-        });
-        ticking = true;
+    const updateBar = (progress: number) => {
+      if (progressBarRef.current) {
+        const clamped = Math.min(1, Math.max(0, progress));
+        progressBarRef.current.style.transform = `scaleX(${clamped})`;
       }
     };
 
-    window.addEventListener("scroll", handleScroll, { passive: true });
-    handleScroll();
-    return () => window.removeEventListener("scroll", handleScroll);
-  }, []);
+    // 1. Dengarkan event real-time dari Lenis (saat momentum scroll bergerak)
+    const handleAppScroll = (e: any) => {
+      if (e.detail && typeof e.detail.progress === "number") {
+        updateBar(e.detail.progress);
+      }
+    };
+
+    // 2. Dengarkan scroll native browser sebagai fallback
+    const handleNativeScroll = () => {
+      const totalHeight = document.documentElement.scrollHeight - window.innerHeight;
+      const progress = totalHeight > 0 ? window.scrollY / totalHeight : 0;
+      updateBar(progress);
+    };
+
+    window.addEventListener("app-scroll", handleAppScroll, { passive: true });
+    window.addEventListener("scroll", handleNativeScroll, { passive: true });
+    handleNativeScroll();
+
+    return () => {
+      window.removeEventListener("app-scroll", handleAppScroll);
+      window.removeEventListener("scroll", handleNativeScroll);
+    };
+  }, [pathname]);
 
   useEffect(() => {
     setPendingHref(null);
@@ -400,11 +409,12 @@ export default function Navbar() {
         </div>
       )}
 
-      {/* Scroll Reading Progress Bar di bagian bawah Navbar */}
+      {/* Scroll Reading Progress Bar di bagian bawah Navbar (Real-time Hardware Accelerated) */}
       <div className="absolute bottom-0 left-0 right-0 h-[2.5px] bg-[#DEC0B3]/25 pointer-events-none overflow-hidden">
         <div
-          className="h-full bg-gradient-to-r from-[#9B4000] via-[#D97706] to-[#FDB659] transition-all duration-150 ease-out shadow-[0_0_8px_rgba(253,182,89,0.8)]"
-          style={{ width: `${scrollProgress}%` }}
+          ref={progressBarRef}
+          className="h-full w-full bg-gradient-to-r from-[#9B4000] via-[#D97706] to-[#FDB659] shadow-[0_0_8px_rgba(253,182,89,0.8)] origin-left will-change-transform"
+          style={{ transform: "scaleX(0)" }}
         />
       </div>
     </header>

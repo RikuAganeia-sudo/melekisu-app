@@ -1,38 +1,49 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { ArrowUp } from "lucide-react";
 
 export default function BackToTop() {
-  const [scrollProgress, setScrollProgress] = useState(0);
   const [isVisible, setIsVisible] = useState(false);
+  const progressCircleRef = useRef<SVGCircleElement>(null);
+
+  // Lingkaran SVG Progres: Radius 16 -> circumference = 2 * PI * 16 ≈ 100.53
+  const radius = 16;
+  const circumference = 2 * Math.PI * radius;
 
   useEffect(() => {
-    let ticking = false;
+    const updateProgress = (progressPercent: number, currentY: number) => {
+      if (progressCircleRef.current) {
+        const progress = Math.min(100, Math.max(0, progressPercent));
+        const offset = circumference - (progress / 100) * circumference;
+        progressCircleRef.current.style.strokeDashoffset = `${offset}`;
+      }
+      setIsVisible(currentY > 260);
+    };
 
-    const handleScroll = () => {
-      if (!ticking) {
-        window.requestAnimationFrame(() => {
-          const totalHeight = document.documentElement.scrollHeight - window.innerHeight;
-          const currentY = window.scrollY;
-
-          if (totalHeight > 0) {
-            const progress = (currentY / totalHeight) * 100;
-            setScrollProgress(Math.min(100, Math.max(0, progress)));
-          }
-
-          setIsVisible(currentY > 260);
-          ticking = false;
-        });
-        ticking = true;
+    // 1. Tangkap event real-time dari Lenis (saat momentum scroll bergerak)
+    const handleAppScroll = (e: any) => {
+      if (e.detail && typeof e.detail.progress === "number") {
+        updateProgress(e.detail.progress * 100, e.detail.scrollY || window.scrollY);
       }
     };
 
-    window.addEventListener("scroll", handleScroll, { passive: true });
-    handleScroll();
+    // 2. Tangkap scroll native browser
+    const handleNativeScroll = () => {
+      const totalHeight = document.documentElement.scrollHeight - window.innerHeight;
+      const progress = totalHeight > 0 ? (window.scrollY / totalHeight) * 100 : 0;
+      updateProgress(progress, window.scrollY);
+    };
 
-    return () => window.removeEventListener("scroll", handleScroll);
-  }, []);
+    window.addEventListener("app-scroll", handleAppScroll, { passive: true });
+    window.addEventListener("scroll", handleNativeScroll, { passive: true });
+    handleNativeScroll();
+
+    return () => {
+      window.removeEventListener("app-scroll", handleAppScroll);
+      window.removeEventListener("scroll", handleNativeScroll);
+    };
+  }, [circumference]);
 
   const scrollToTop = () => {
     if (typeof window !== "undefined" && (window as any).__lenis) {
@@ -44,11 +55,6 @@ export default function BackToTop() {
       });
     }
   };
-
-  // Lingkaran SVG Progres: Radius 16 -> circumference = 2 * PI * 16 ≈ 100.53
-  const radius = 16;
-  const circumference = 2 * Math.PI * radius;
-  const strokeDashoffset = circumference - (scrollProgress / 100) * circumference;
 
   return (
     <div
@@ -80,8 +86,9 @@ export default function BackToTop() {
             strokeOpacity="0.4"
             fill="transparent"
           />
-          {/* Animated Progress circle */}
+          {/* Animated Progress circle (Real-time GPU accelerated) */}
           <circle
+            ref={progressCircleRef}
             cx="22"
             cy="22"
             r={radius}
@@ -89,9 +96,8 @@ export default function BackToTop() {
             strokeWidth="2.5"
             fill="transparent"
             strokeDasharray={circumference}
-            strokeDashoffset={strokeDashoffset}
+            strokeDashoffset={circumference}
             strokeLinecap="round"
-            className="transition-all duration-150 ease-out"
           />
         </svg>
 

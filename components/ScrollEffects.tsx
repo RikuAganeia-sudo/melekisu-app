@@ -29,6 +29,15 @@ export default function ScrollEffects() {
     // Pasang ke window agar bisa diakses komponen interaktif (seperti tombol BackToTop)
     (window as any).__lenis = lenis;
 
+    // Pancarkan event real-time ke window pada setiap frame animasi scroll (60-120fps)
+    lenis.on("scroll", (e: any) => {
+      window.dispatchEvent(
+        new CustomEvent("app-scroll", {
+          detail: { progress: e.progress, scrollY: e.scroll },
+        })
+      );
+    });
+
     let rafId: number;
     function raf(time: number) {
       lenis.raf(time);
