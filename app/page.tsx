@@ -914,7 +914,7 @@ export default function HomePage() {
             {latestNews.map((article, index) => (
               <article
                 key={article.id}
-                className={`bg-white rounded-2xl overflow-hidden shadow-xs hover:shadow-md border border-[#DEC0B3]/40 transition-all duration-300 group reveal-on-scroll stagger-${(index % 3) + 1} flex flex-row-reverse md:flex-col justify-between p-3.5 sm:p-4 md:p-0 gap-3 sm:gap-4 md:gap-0`}
+                className={`bg-white rounded-2xl overflow-hidden shadow-xs hover:shadow-md border border-[#DEC0B3]/40 transition-all duration-300 group reveal-on-scroll stagger-${(index % 3) + 1} flex flex-row-reverse md:flex-col justify-between p-3.5 sm:p-4 md:p-0 gap-3 sm:gap-4 md:gap-0 h-full`}
               >
                 {/* Thumbnail Gambar (Kanan di HP, Full-Top di Desktop) */}
                 <div className="relative w-24 h-24 sm:w-28 sm:h-28 md:w-full md:h-48 rounded-xl md:rounded-none shrink-0 overflow-hidden bg-gradient-to-tr from-[#F3D4c1] to-[#FFF8F5] flex items-center justify-center text-[#9B4000]">

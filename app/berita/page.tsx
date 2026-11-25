@@ -1,9 +1,9 @@
 "use client";
 
-import { useState, useMemo, useEffect, Suspense } from "react";
+import { useState, useMemo, useEffect, useRef, Suspense } from "react";
 import { useSearchParams } from "next/navigation";
 import Link from "next/link";
-import { MessageSquare, ThumbsUp, ArrowRight, Send, AlertCircle, Search, X, FileText, CheckCircle2, Bot, ArrowUpDown } from "lucide-react";
+import { MessageSquare, ThumbsUp, ArrowRight, Send, AlertCircle, Search, X, FileText, CheckCircle2, Bot, ArrowUpDown, ChevronDown, Check } from "lucide-react";
 import { getCombinedNews, sendComment, getCommentsForSlug, isTextViolating, toggleCommentUpvote, getCommentUpvoteCount, isCommentUpvotedByUser } from "@/lib/newsService";
 import { NewsItem } from "@/data/news";
 import { getCategoryCoverImage, POLICY_CATEGORIES } from "@/lib/policyDatasets";
@@ -107,6 +107,25 @@ function BeritaContent() {
 
     const [selectedCategory, setSelectedCategory] = useState(categoryQuery);
     const [sortBy, setSortBy] = useState<"terbaru" | "populer" | "diskusi">("terbaru");
+    const [isSortOpen, setIsSortOpen] = useState(false);
+    const sortRef = useRef<HTMLDivElement>(null);
+
+    const sortOptions = [
+        { value: "terbaru", label: "Terbaru" },
+        { value: "populer", label: "Paling Banyak Diapresiasi" },
+        { value: "diskusi", label: "Paling Banyak Tanggapan" },
+    ] as const;
+
+    useEffect(() => {
+        const handleClickOutside = (e: MouseEvent) => {
+            if (sortRef.current && !sortRef.current.contains(e.target as Node)) {
+                setIsSortOpen(false);
+            }
+        };
+        document.addEventListener("mousedown", handleClickOutside);
+        return () => document.removeEventListener("mousedown", handleClickOutside);
+    }, []);
+
     const [newsData, setNewsData] = useState<NewsItem[]>([]);
     const [activeCommentBox, setActiveCommentBox] = useState<string | null>(null);
     const [commentInputs, setCommentInputs] = useState<{ [key: string]: string }>({});
@@ -456,19 +475,58 @@ function BeritaContent() {
                             )}
                         </div>
 
-                        {/* Selector Pengurutan (Sorting) */}
-                        <div className="flex items-center gap-2 bg-white px-3.5 py-2 rounded-2xl border border-[#DEC0B3]/60 text-xs shadow-xs shrink-0">
-                            <ArrowUpDown className="w-3.5 h-3.5 text-[#9B4000]" />
-                            <span className="text-[11px] font-bold text-[#8B7266]">Urutkan:</span>
-                            <select
-                                value={sortBy}
-                                onChange={(e) => setSortBy(e.target.value as any)}
-                                className="bg-transparent font-extrabold text-[#28180C] focus:outline-none cursor-pointer"
+                        {/* Selector Pengurutan Kustom (Custom Dropdown) */}
+                        <div className="relative shrink-0 w-full sm:w-auto" ref={sortRef}>
+                            <button
+                                type="button"
+                                onClick={() => setIsSortOpen(!isSortOpen)}
+                                className={`w-full sm:w-auto flex items-center justify-between gap-2.5 bg-white px-3.5 py-2 rounded-2xl border text-xs shadow-xs transition-all cursor-pointer ${
+                                    isSortOpen
+                                        ? "border-[#9B4000] ring-2 ring-[#9B4000]/15"
+                                        : "border-[#DEC0B3]/70 hover:border-[#9B4000]/50"
+                                }`}
+                                aria-expanded={isSortOpen}
                             >
-                                <option value="terbaru">Terbaru</option>
-                                <option value="populer">Paling Banyak Diapresiasi</option>
-                                <option value="diskusi">Paling Banyak Tanggapan</option>
-                            </select>
+                                <div className="flex items-center gap-1.5 min-w-0">
+                                    <ArrowUpDown className="w-3.5 h-3.5 text-[#9B4000] shrink-0" />
+                                    <span className="text-[11px] font-bold text-[#8B7266] shrink-0">Urutkan:</span>
+                                    <span className="font-extrabold text-[#28180C] truncate">
+                                        {sortOptions.find((o) => o.value === sortBy)?.label}
+                                    </span>
+                                </div>
+                                <ChevronDown
+                                    className={`w-3.5 h-3.5 text-[#8B7266] transition-transform duration-200 shrink-0 ${
+                                        isSortOpen ? "rotate-180 text-[#9B4000]" : ""
+                                    }`}
+                                />
+                            </button>
+
+                            {/* Dropdown Menu Popup */}
+                            {isSortOpen && (
+                                <div className="absolute right-0 top-full mt-1.5 w-full sm:w-56 bg-white rounded-2xl border border-[#DEC0B3]/60 shadow-xl p-1.5 z-40 animate-in fade-in zoom-in-95 duration-150">
+                                    {sortOptions.map((opt) => {
+                                        const isSelected = sortBy === opt.value;
+                                        return (
+                                            <button
+                                                key={opt.value}
+                                                type="button"
+                                                onClick={() => {
+                                                    setSortBy(opt.value);
+                                                    setIsSortOpen(false);
+                                                }}
+                                                className={`w-full flex items-center justify-between px-3 py-2 rounded-xl text-xs font-bold transition-colors cursor-pointer text-left ${
+                                                    isSelected
+                                                        ? "bg-[#FFF1E9] text-[#9B4000]"
+                                                        : "text-[#574238] hover:bg-[#FFF8F5] hover:text-[#28180C]"
+                                                }`}
+                                            >
+                                                <span>{opt.label}</span>
+                                                {isSelected && <Check className="w-3.5 h-3.5 text-[#9B4000] shrink-0" />}
+                                            </button>
+                                        );
+                                    })}
+                                </div>
+                            )}
                         </div>
                     </div>
                 </div>
@@ -480,7 +538,7 @@ function BeritaContent() {
                         <span className="text-xs font-bold uppercase tracking-wider">Memuat Katalog Berita...</span>
                     </div>
                 ) : filteredNews.length > 0 ? (
-                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 items-start">
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 items-stretch">
                         {filteredNews.map((article, index) => {
                             const isCommentOpen = activeCommentBox === article.id;
                             const isLiked = (article as any).isLiked || false;
@@ -512,9 +570,9 @@ function BeritaContent() {
                             return (
                                 <article
                                     key={article.id}
-                                    className={`bg-white rounded-2xl overflow-hidden shadow-xs hover:shadow-md border border-[#DEC0B3]/40 transition-all duration-300 group reveal-on-scroll stagger-${(index % 3) + 1} flex flex-col`}
+                                    className={`bg-white rounded-2xl overflow-hidden shadow-xs hover:shadow-md border border-[#DEC0B3]/40 transition-all duration-300 group reveal-on-scroll stagger-${(index % 3) + 1} flex flex-col justify-between h-full`}
                                 >
-                                    <div className="flex flex-row-reverse md:flex-col p-3.5 sm:p-4 md:p-0 gap-3 sm:gap-4 md:gap-0">
+                                    <div className="flex flex-row-reverse md:flex-col p-3.5 sm:p-4 md:p-0 gap-3 sm:gap-4 md:gap-0 flex-1">
                                         {/* Thumbnail */}
                                         <div className="relative w-24 h-24 sm:w-28 sm:h-28 md:w-full md:h-48 rounded-xl md:rounded-none shrink-0 overflow-hidden bg-gradient-to-tr from-[#F3D4c1] to-[#FFF8F5] flex items-center justify-center text-[#9B4000]">
                                             {article.image ? (
