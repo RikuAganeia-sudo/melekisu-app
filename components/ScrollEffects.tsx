@@ -75,8 +75,8 @@ export default function ScrollEffects() {
       },
       {
         root: null,
-        rootMargin: "0px 0px -40px 0px", // Memicu sebelum mencapai batas bawah viewport
-        threshold: 0.05,
+        rootMargin: "0px 0px 80px 0px", // Memicu 80px sebelum mencapai batas bawah viewport agar kartu langsung siap tanpa jeda
+        threshold: 0.02,
       }
     );
 

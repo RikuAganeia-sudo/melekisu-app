@@ -128,8 +128,8 @@ html {
 /* --- Element Reveal On Scroll --- */
 .reveal-on-scroll {
   opacity: 0;
-  transform: translateY(22px);
-  transition: opacity 0.65s cubic-bezier(0.16, 1, 0.3, 1), transform 0.65s cubic-bezier(0.16, 1, 0.3, 1);
+  transform: translateY(16px);
+  transition: opacity 0.4s cubic-bezier(0.16, 1, 0.3, 1), transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
   will-change: opacity, transform;
 }
 
@@ -138,13 +138,25 @@ html {
   transform: translateY(0);
 }
 
-/* Stagger animation utilities for grids & lists */
-.stagger-1 { transition-delay: 60ms; }
-.stagger-2 { transition-delay: 120ms; }
-.stagger-3 { transition-delay: 180ms; }
-.stagger-4 { transition-delay: 240ms; }
-.stagger-5 { transition-delay: 300ms; }
-.stagger-6 { transition-delay: 360ms; }
+/* Stagger animation utilities for grids & lists on desktop */
+.stagger-1 { transition-delay: 50ms; }
+.stagger-2 { transition-delay: 100ms; }
+.stagger-3 { transition-delay: 150ms; }
+.stagger-4 { transition-delay: 200ms; }
+.stagger-5 { transition-delay: 250ms; }
+.stagger-6 { transition-delay: 300ms; }
+
+/* Snappy on Mobile (< 768px): zero delay and faster transition so cards appear instantly */
+@media (max-width: 768px) {
+  .reveal-on-scroll {
+    transform: translateY(8px);
+    transition: opacity 0.25s ease-out, transform 0.25s ease-out;
+  }
+  
+  .stagger-1, .stagger-2, .stagger-3, .stagger-4, .stagger-5, .stagger-6 {
+    transition-delay: 0ms !important;
+  }
+}
 
 /* Accessibility: Disable transforms & transitions for users who prefer reduced motion */
 @media (prefers-reduced-motion: reduce) {
