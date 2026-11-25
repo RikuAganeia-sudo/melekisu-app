@@ -910,96 +910,80 @@ export default function HomePage() {
             )}
           </div>
         ) : (
-          <section className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3.5 sm:gap-4 md:gap-6 items-stretch">
+          <section className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 items-stretch">
             {latestNews.map((article, index) => (
               <article
                 key={article.id}
-                className={`bg-white rounded-2xl overflow-hidden shadow-xs hover:shadow-md border border-[#DEC0B3]/40 transition-all duration-300 group reveal-on-scroll stagger-${(index % 3) + 1} flex flex-row-reverse md:flex-col justify-between p-3.5 sm:p-4 md:p-0 gap-3 sm:gap-4 md:gap-0 h-full`}
+                className={`flex flex-col justify-between bg-white rounded-2xl overflow-hidden shadow-xs hover:shadow-md border border-[#DEC0B3]/40 transition-all duration-300 group reveal-on-scroll stagger-${(index % 3) + 1} h-full`}
               >
-                {/* Thumbnail Gambar (Kanan di HP, Full-Top di Desktop) */}
-                <div className="relative w-24 h-24 sm:w-28 sm:h-28 md:w-full md:h-48 rounded-xl md:rounded-none shrink-0 overflow-hidden bg-gradient-to-tr from-[#F3D4c1] to-[#FFF8F5] flex items-center justify-center text-[#9B4000]">
-                  {article.image ? (
-                    <img
-                      src={article.image}
-                      alt=""
-                      referrerPolicy="no-referrer"
-                      onError={(e) => {
-                        const target = e.currentTarget;
-                        target.onerror = null;
-                        target.src = getCategoryCoverImage(
-                          getCategoryName(article)
-                        );
-                      }}
-                      className="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-                    />
-                  ) : (
-                    <FileText className="w-8 h-8 md:w-10 md:h-10 text-[#9B4000] opacity-60 group-hover:scale-110 transition-transform duration-300" />
-                  )}
-                  {/* Overlay gradien di desktop */}
-                  <div className="hidden md:block absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent pointer-events-none" />
-                  {/* Badge Kategori hanya di gambar untuk Desktop */}
-                  <div className="hidden md:block absolute top-3 left-3 z-10">
-                    <span className="bg-[#FDB659] text-[#724700] px-3 py-1 rounded-full text-[11px] font-bold uppercase shadow-xs">
-                      {getCategoryName(article)}
-                    </span>
-                  </div>
-                </div>
-
-                {/* Konten Teks & Tombol Aksi */}
-                <div className="flex-1 min-w-0 flex flex-col justify-between md:p-5">
-                  <div className="flex flex-col gap-1 md:gap-2.5">
-                    {/* Header Baris Mobile: Kategori + Sumber */}
-                    <div className="flex items-center gap-1.5 md:gap-2 flex-wrap">
-                      <span className="md:hidden bg-[#FFE3D1] text-[#9B4000] px-2 py-0.5 rounded-md text-[10px] font-extrabold uppercase tracking-wide">
+                <div>
+                  <div className="relative h-48 bg-gradient-to-tr from-[#F3D4c1] to-[#FFF8F5] flex items-center justify-center text-[#9B4000] overflow-hidden">
+                    {article.image ? (
+                      <img
+                        src={article.image}
+                        alt=""
+                        referrerPolicy="no-referrer"
+                        onError={(e) => {
+                          const target = e.currentTarget;
+                          target.onerror = null;
+                          target.src = getCategoryCoverImage(
+                            getCategoryName(article)
+                          );
+                        }}
+                        className="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                      />
+                    ) : (
+                      <FileText className="w-10 h-10 text-[#9B4000] opacity-60 group-hover:scale-110 transition-transform duration-300" />
+                    )}
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent pointer-events-none" />
+                    <div className="absolute top-3 left-3 z-10">
+                      <span className="bg-[#FDB659] text-[#724700] px-3 py-1 rounded-full text-[11px] font-bold uppercase shadow-xs">
                         {getCategoryName(article)}
                       </span>
-                      <span className="text-[10px] md:text-[11px] font-bold text-[#8B7266] uppercase tracking-wider truncate">
-                        {article.source}
-                      </span>
                     </div>
-
-                    <h3 className="text-xs sm:text-sm md:text-base font-bold text-[#28180C] group-hover:text-[#9B4000] transition-colors line-clamp-2 leading-snug">
+                  </div>
+                  <div className="p-5 flex flex-col gap-2.5">
+                    <span className="text-[11px] font-bold text-[#8B7266] uppercase tracking-wider">
+                      {article.source}
+                    </span>
+                    <h3 className="text-base font-bold text-[#28180C] group-hover:text-[#9B4000] transition-colors line-clamp-2 leading-snug">
                       <Link href={`/berita/${article.slug}`}>
                         {article.title}
                       </Link>
                     </h3>
-
-                    <p className="hidden md:block text-xs text-[#574238] line-clamp-2 leading-relaxed">
+                    <p className="text-xs text-[#574238] line-clamp-2 leading-relaxed">
                       {article.excerpt}
                     </p>
                   </div>
+                </div>
+                <div className="p-5 pt-0 mt-auto flex items-center justify-between border-t border-[#DEC0B3]/20 pt-4">
+                  <button
+                    type="button"
+                    onClick={() => {
+                      window.dispatchEvent(
+                        new CustomEvent("open-ai-chat", {
+                          detail: {
+                            prompt: `Bahas berita "${article.title}" dan jelaskan apa poin pentingnya bagi warga.`,
+                            slug: article.slug,
+                            article: article,
+                          },
+                        })
+                      );
+                    }}
+                    className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-[11px] font-bold bg-[#FFF1E9] text-[#9B4000] hover:bg-[#FFDDC9] border border-[#DEC0B3]/50 transition-all cursor-pointer active:scale-95 shadow-2xs"
+                    title="Tanya AI tentang berita ini"
+                  >
+                    <Bot className="w-3 h-3 text-[#9B4000]" />
+                    <span>Tanya AI</span>
+                  </button>
 
-                  {/* Action Bar Bawah */}
-                  <div className="mt-2 md:mt-4 pt-2 md:pt-4 border-t border-[#DEC0B3]/25 flex items-center justify-between">
-                    <button
-                      type="button"
-                      onClick={() => {
-                        window.dispatchEvent(
-                          new CustomEvent("open-ai-chat", {
-                            detail: {
-                              prompt: `Bahas berita "${article.title}" dan jelaskan apa poin pentingnya bagi warga.`,
-                              slug: article.slug,
-                              article: article,
-                            },
-                          })
-                        );
-                      }}
-                      className="inline-flex items-center gap-1 px-2 md:px-2.5 py-0.5 md:py-1 rounded-full text-[10px] md:text-[11px] font-bold bg-[#FFF1E9] text-[#9B4000] hover:bg-[#FFDDC9] border border-[#DEC0B3]/50 transition-all cursor-pointer active:scale-95 shadow-2xs"
-                      title="Tanya AI tentang berita ini"
-                    >
-                      <Bot className="w-3 h-3 text-[#9B4000]" />
-                      <span>Tanya AI</span>
-                    </button>
-
-                    <Link
-                      href={`/berita/${article.slug}`}
-                      className="text-[11px] md:text-xs text-[#9B4000] font-bold hover:text-[#8C4A1E] flex items-center gap-1 cursor-pointer"
-                    >
-                      <span className="hidden sm:inline">Baca Selengkapnya</span>
-                      <span className="sm:hidden">Baca</span>
-                      <ArrowRight className="w-3 h-3 md:w-3.5 md:h-3.5" />
-                    </Link>
-                  </div>
+                  <Link
+                    href={`/berita/${article.slug}`}
+                    className="text-xs text-[#9B4000] font-bold hover:text-[#8C4A1E] flex items-center gap-1 cursor-pointer"
+                  >
+                    <span>Baca Selengkapnya</span>
+                    <ArrowRight className="w-3.5 h-3.5" />
+                  </Link>
                 </div>
               </article>
             ))}

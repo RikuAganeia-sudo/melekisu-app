@@ -572,9 +572,9 @@ function BeritaContent() {
                                     key={article.id}
                                     className={`bg-white rounded-2xl overflow-hidden shadow-xs hover:shadow-md border border-[#DEC0B3]/40 transition-all duration-300 group reveal-on-scroll stagger-${(index % 3) + 1} flex flex-col justify-between h-full`}
                                 >
-                                    <div className="flex flex-row-reverse md:flex-col p-3.5 sm:p-4 md:p-0 gap-3 sm:gap-4 md:gap-0 flex-1">
+                                    <div>
                                         {/* Thumbnail */}
-                                        <div className="relative w-24 h-24 sm:w-28 sm:h-28 md:w-full md:h-48 rounded-xl md:rounded-none shrink-0 overflow-hidden bg-gradient-to-tr from-[#F3D4c1] to-[#FFF8F5] flex items-center justify-center text-[#9B4000]">
+                                        <div className="relative h-48 bg-gradient-to-tr from-[#F3D4c1] to-[#FFF8F5] flex items-center justify-center text-[#9B4000] overflow-hidden">
                                             {article.image ? (
                                                 <img
                                                     src={article.image}
@@ -588,9 +588,9 @@ function BeritaContent() {
                                                     className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
                                                 />
                                             ) : (
-                                                <FileText className="w-8 h-8 md:w-10 md:h-10 text-[#9B4000] opacity-60 group-hover:scale-110 transition-transform duration-300" />
+                                                <FileText className="w-10 h-10 text-[#9B4000] opacity-60 group-hover:scale-110 transition-transform duration-300" />
                                             )}
-                                            <div className="hidden md:block absolute top-3 left-3 z-10">
+                                            <div className="absolute top-3 left-3 z-10">
                                                 <span className="bg-[#FDB659] text-[#724700] px-3 py-1 rounded-full text-[11px] font-bold uppercase shadow-xs">
                                                     {article.category}
                                                 </span>
@@ -598,31 +598,21 @@ function BeritaContent() {
                                         </div>
 
                                         {/* Content */}
-                                        <div className="flex-1 min-w-0 flex flex-col justify-between md:p-5 md:gap-2.5">
-                                            <div className="flex flex-col gap-1 md:gap-2">
-                                                <div className="flex items-center gap-1.5 md:gap-2 flex-wrap">
-                                                    <span className="md:hidden bg-[#FFE3D1] text-[#9B4000] px-2 py-0.5 rounded-md text-[10px] font-extrabold uppercase tracking-wide">
-                                                        {article.category}
-                                                    </span>
-                                                    <span className="text-[10px] md:text-[11px] font-bold text-[#8B7266] uppercase tracking-wider truncate">
-                                                        {article.source}
-                                                    </span>
-                                                </div>
-
-                                                <h2 className="text-xs sm:text-sm md:text-base font-bold text-[#28180C] group-hover:text-[#9B4000] transition-colors line-clamp-2 leading-snug">
-                                                    <Link href={`/berita/${article.slug}`}>
-                                                        {article.title}
-                                                    </Link>
-                                                </h2>
-                                                <p className="hidden md:block text-xs text-[#574238] line-clamp-2 leading-relaxed">
-                                                    {article.excerpt}
-                                                </p>
-                                            </div>
+                                        <div className="p-5 flex flex-col gap-2.5">
+                                            <span className="text-[11px] font-bold text-[#8B7266] uppercase tracking-wider">{article.source}</span>
+                                            <h2 className="text-base font-bold text-[#28180C] group-hover:text-[#9B4000] transition-colors line-clamp-2 leading-snug">
+                                                <Link href={`/berita/${article.slug}`}>
+                                                    {article.title}
+                                                </Link>
+                                            </h2>
+                                            <p className="text-xs text-[#574238] line-clamp-2 leading-relaxed">
+                                                {article.excerpt}
+                                            </p>
                                         </div>
                                     </div>
 
                                     {/* Interaksi Komentar */}
-                                    <div className="px-3.5 sm:px-5 pb-2 md:pb-3">
+                                    <div className="px-5 pb-3">
                                         {isCommentOpen && (
                                             <div className="bg-[#FFF8F5] p-3 rounded-xl border border-[#DEC0B3]/40 mb-3 flex flex-col gap-2.5">
                                                 <div className="flex items-center justify-between text-[11px] font-bold text-[#8B7266]">
@@ -702,7 +692,7 @@ function BeritaContent() {
                                     </div>
 
                                     {/* Footer Card */}
-                                    <div className="p-3.5 sm:p-5 pt-0 mt-auto flex items-center justify-between border-t border-[#DEC0B3]/20 pt-2.5 md:pt-4 text-xs text-[#574238]">
+                                    <div className="p-5 pt-0 mt-auto flex items-center justify-between border-t border-[#DEC0B3]/20 pt-4 text-xs text-[#574238]">
                                         <div className="flex items-center gap-3">
                                             <button
                                                 onClick={() => setActiveCommentBox(isCommentOpen ? null : article.id)}
