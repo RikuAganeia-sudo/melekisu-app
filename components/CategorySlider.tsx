@@ -124,9 +124,9 @@ export default function CategorySlider({
 
     return (
         <div className="relative w-full group select-none">
-            {/* Tombol Geser Kiri Melayang Rapi (Floating Glassmorphism) */}
+            {/* Tombol Geser Kiri Melayang Rapi (Desktop Only) */}
             {canScrollLeft && (
-                <div className="absolute left-0 top-1/2 -translate-y-1/2 z-30 flex items-center pl-0.5 animate-in fade-in duration-200">
+                <div className="hidden sm:flex absolute left-0 top-1/2 -translate-y-1/2 z-30 items-center pl-0.5 animate-in fade-in duration-200">
                     <button
                         type="button"
                         onClick={() => handleSlide("left")}
@@ -173,9 +173,9 @@ export default function CategorySlider({
                 })}
             </div>
 
-            {/* Tombol Geser Kanan Melayang Rapi (Floating Glassmorphism) */}
+            {/* Tombol Geser Kanan Melayang Rapi (Desktop Only) */}
             {canScrollRight && (
-                <div className="absolute right-0 top-1/2 -translate-y-1/2 z-30 flex items-center pr-0.5 animate-in fade-in duration-200">
+                <div className="hidden sm:flex absolute right-0 top-1/2 -translate-y-1/2 z-30 items-center pr-0.5 animate-in fade-in duration-200">
                     <button
                         type="button"
                         onClick={() => handleSlide("right")}
