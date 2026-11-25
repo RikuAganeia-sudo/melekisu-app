@@ -112,7 +112,7 @@ export default function TransparansiAksiPage() {
             <main className="max-w-[1360px] mx-auto px-6 py-10 flex flex-col gap-10">
 
                 {/* Header Section dengan Gaya Modern Banner */}
-                <div className="relative overflow-hidden bg-gradient-to-r from-[#FFF1E9] via-[#FFDDC9]/30 to-[#FFF8F5] border border-[#DEC0B3]/40 rounded-3xl p-8 shadow-xs flex flex-col md:flex-row md:items-center justify-between gap-6">
+                <div className="relative overflow-hidden bg-gradient-to-r from-[#FFF1E9] via-[#FFDDC9]/30 to-[#FFF8F5] border border-[#DEC0B3]/40 rounded-3xl p-8 shadow-xs flex flex-col md:flex-row md:items-center justify-between gap-6 reveal-on-scroll">
                     <div className="absolute -right-10 -bottom-10 w-48 h-48 bg-[#FDB659]/10 rounded-full blur-3xl pointer-events-none"></div>
 
                     <div className="flex items-start gap-4 relative z-10">
@@ -137,7 +137,7 @@ export default function TransparansiAksiPage() {
                 <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
 
                     {/* Kartu Statistik Ringkas */}
-                    <div className="bg-white/90 backdrop-blur-md p-6 sm:p-8 rounded-3xl shadow-sm border border-[#DEC0B3]/50 flex flex-col justify-between relative overflow-hidden group hover:border-[#9B4000]/40 transition-all">
+                    <div className="bg-white/90 backdrop-blur-md p-6 sm:p-8 rounded-3xl shadow-sm border border-[#DEC0B3]/50 flex flex-col justify-between relative overflow-hidden group hover:border-[#9B4000]/40 transition-all reveal-on-scroll stagger-1">
                         <div className="absolute top-0 right-0 w-32 h-32 bg-[#FFF1E9] rounded-bl-full -z-10 transition-transform group-hover:scale-110"></div>
                         <div>
                             <div className="flex items-center justify-between mb-2">
@@ -162,7 +162,7 @@ export default function TransparansiAksiPage() {
                     </div>
 
                     {/* Grafik Batang Visual Progres Penyelesaian Murni */}
-                    <div className="lg:col-span-2 bg-white/90 backdrop-blur-md p-6 sm:p-8 rounded-3xl shadow-sm border border-[#DEC0B3]/50 flex flex-col justify-between">
+                    <div className="lg:col-span-2 bg-white/90 backdrop-blur-md p-6 sm:p-8 rounded-3xl shadow-sm border border-[#DEC0B3]/50 flex flex-col justify-between reveal-on-scroll stagger-2">
                         <div className="flex items-center justify-between mb-5">
                             <h4 className="text-xs font-bold text-[#28180C] uppercase tracking-wider flex items-center gap-2">
                                 <div className="p-2 rounded-xl bg-[#FFF1E9] text-[#9B4000]">
@@ -265,7 +265,7 @@ export default function TransparansiAksiPage() {
                             return (
                                 <div
                                     key={item.id}
-                                    className="bg-white/95 backdrop-blur-md rounded-3xl p-6 sm:p-8 shadow-sm border border-[#DEC0B3]/50 flex flex-col gap-6 transition-all duration-300 hover:shadow-lg hover:border-[#9B4000]/40 group"
+                                    className="bg-white/95 backdrop-blur-md rounded-3xl p-6 sm:p-8 shadow-sm border border-[#DEC0B3]/50 flex flex-col gap-6 transition-all duration-300 hover:shadow-lg hover:border-[#9B4000]/40 group reveal-on-scroll"
                                 >
                                     {/* Header Card: Instansi & Status */}
                                     <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 pb-5 border-b border-[#DEC0B3]/30">

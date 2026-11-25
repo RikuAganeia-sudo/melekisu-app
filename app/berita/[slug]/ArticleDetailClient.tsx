@@ -386,7 +386,7 @@ export default function ArticleDetailClient({ slug }: { slug: string }) {
 
                 {/* Kotak Tanya Asisten AI */}
                 {articleData && (
-                    <div className="bg-gradient-to-br from-[#FFF1E9] via-white to-[#FFEDE3] rounded-2xl p-6 sm:p-7 border border-[#DEC0B3]/70 shadow-sm flex flex-col gap-4">
+                    <div className="bg-gradient-to-br from-[#FFF1E9] via-white to-[#FFEDE3] rounded-2xl p-6 sm:p-7 border border-[#DEC0B3]/70 shadow-sm flex flex-col gap-4 reveal-on-scroll">
                         <div className="flex items-start gap-3.5">
                             <div className="w-10 h-10 rounded-2xl bg-gradient-to-tr from-[#9B4000] to-[#803500] text-white flex items-center justify-center shrink-0 shadow-md">
                                 <Bot className="w-5 h-5" />
@@ -434,7 +434,7 @@ export default function ArticleDetailClient({ slug }: { slug: string }) {
                 )}
 
                 {/* Bagian Komentar */}
-                <section className="bg-white rounded-2xl p-6 sm:p-8 shadow-sm border border-[#DEC0B3]/40 flex flex-col gap-6">
+                <section className="bg-white rounded-2xl p-6 sm:p-8 shadow-sm border border-[#DEC0B3]/40 flex flex-col gap-6 reveal-on-scroll">
                     <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between border-b border-[#DEC0B3]/30 pb-4 gap-2">
                         <div>
                             <h2 className="text-lg font-bold text-[#28180C] flex items-center gap-2">

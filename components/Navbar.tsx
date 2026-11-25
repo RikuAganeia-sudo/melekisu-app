@@ -44,8 +44,33 @@ export default function Navbar() {
   const [searchQuery, setSearchQuery] = useState("");
   const [currentUser, setCurrentUser] = useState<NavUserProfile | null>(null);
   const [pendingHref, setPendingHref] = useState<string | null>(null);
+  const [scrollProgress, setScrollProgress] = useState(0);
   const pathname = usePathname();
   const router = useRouter();
+
+  // Pantau posisi scroll untuk membaca progress bar di bawah navbar
+  useEffect(() => {
+    let ticking = false;
+    const handleScroll = () => {
+      if (!ticking) {
+        window.requestAnimationFrame(() => {
+          const totalHeight = document.documentElement.scrollHeight - window.innerHeight;
+          if (totalHeight > 0) {
+            const currentProgress = (window.scrollY / totalHeight) * 100;
+            setScrollProgress(Math.min(100, Math.max(0, currentProgress)));
+          } else {
+            setScrollProgress(0);
+          }
+          ticking = false;
+        });
+        ticking = true;
+      }
+    };
+
+    window.addEventListener("scroll", handleScroll, { passive: true });
+    handleScroll();
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
 
   useEffect(() => {
     setPendingHref(null);
@@ -374,6 +399,14 @@ export default function Navbar() {
           </div>
         </div>
       )}
+
+      {/* Scroll Reading Progress Bar di bagian bawah Navbar */}
+      <div className="absolute bottom-0 left-0 right-0 h-[2.5px] bg-[#DEC0B3]/25 pointer-events-none overflow-hidden">
+        <div
+          className="h-full bg-gradient-to-r from-[#9B4000] via-[#D97706] to-[#FDB659] transition-all duration-150 ease-out shadow-[0_0_8px_rgba(253,182,89,0.8)]"
+          style={{ width: `${scrollProgress}%` }}
+        />
+      </div>
     </header>
   );
 }

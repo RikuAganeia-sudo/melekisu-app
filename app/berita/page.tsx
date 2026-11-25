@@ -480,7 +480,7 @@ function BeritaContent() {
                     </div>
                 ) : filteredNews.length > 0 ? (
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 items-start">
-                        {filteredNews.map((article) => {
+                        {filteredNews.map((article, index) => {
                             const isCommentOpen = activeCommentBox === article.id;
                             const isLiked = (article as any).isLiked || false;
 
@@ -511,7 +511,7 @@ function BeritaContent() {
                             return (
                                 <article
                                     key={article.id}
-                                    className="flex flex-col bg-white rounded-2xl overflow-hidden shadow-sm hover:shadow-md border border-[#DEC0B3]/40 transition-all duration-300 group"
+                                    className={`flex flex-col bg-white rounded-2xl overflow-hidden shadow-sm hover:shadow-md border border-[#DEC0B3]/40 transition-all duration-300 group reveal-on-scroll stagger-${(index % 3) + 1}`}
                                 >
                                     <div>
                                         {/* Thumbnail */}

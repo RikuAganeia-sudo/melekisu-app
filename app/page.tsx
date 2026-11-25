@@ -568,7 +568,7 @@ export default function HomePage() {
             </span>
           </div>
         ) : featuredNews ? (
-          <section className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-stretch">
+          <section className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-stretch reveal-on-scroll">
             {/* Left Visual Banner */}
             <div className="lg:col-span-7 relative group rounded-3xl overflow-hidden shadow-md flex flex-col justify-between p-6 sm:p-8 min-h-[360px] sm:min-h-[420px] transition-all duration-500 border border-[#DEC0B3]/40 bg-[#28180C]">
               {featuredNews.image ? (
@@ -836,7 +836,7 @@ export default function HomePage() {
         )}
 
         {/* Section Heading & Search */}
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between pt-4 border-t border-[#DEC0B3]/40 gap-3">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between pt-4 border-t border-[#DEC0B3]/40 gap-3 reveal-on-scroll">
           <div className="flex flex-wrap items-center gap-3">
             <div className="w-2.5 h-6 bg-[#9B4000] rounded-full"></div>
             <h2 className="text-xl font-extrabold text-[#28180C] tracking-tight">
@@ -900,10 +900,10 @@ export default function HomePage() {
           </div>
         ) : (
           <section className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 items-stretch">
-            {latestNews.map((article) => (
+            {latestNews.map((article, index) => (
               <article
                 key={article.id}
-                className="flex flex-col justify-between bg-white rounded-2xl overflow-hidden shadow-sm hover:shadow-md border border-[#DEC0B3]/40 transition-all duration-300 group"
+                className={`flex flex-col justify-between bg-white rounded-2xl overflow-hidden shadow-sm hover:shadow-md border border-[#DEC0B3]/40 transition-all duration-300 group reveal-on-scroll stagger-${(index % 3) + 1}`}
               >
                 <div>
                   <div className="relative h-48 bg-gradient-to-tr from-[#F3D4c1] to-[#FFF8F5] flex items-center justify-center text-[#9B4000] overflow-hidden">
