@@ -3,6 +3,7 @@ import { EXTERNAL_NEWS_SOURCES, fetchExternalLiveNews, LiveExternalNewsItem } fr
 import { POST as handleAutoNews } from "@/app/api/auto-news/route";
 import { createClient } from "@supabase/supabase-js";
 import { POLICY_DATASETS } from "@/lib/policyDatasets";
+import { isNewsAlreadyPublished, generateSlug } from "@/lib/newsDeduplication";
 
 export async function GET(req: Request) {
     try {
@@ -24,42 +25,32 @@ export async function GET(req: Request) {
         // 2. Ambil riwayat berita dan sumber media terakhir untuk rotasi yang adil dan beragam
         const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
         const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY;
-        const existingTitles: string[] = [];
-        const existingSlugs: string[] = [];
-        let dbNewsList: any[] = [];
+        let dbNewsList: { id?: string; title: string; slug?: string; source?: string }[] = [];
 
         if (supabaseUrl && supabaseKey) {
             try {
                 const supabase = createClient(supabaseUrl, supabaseKey);
                 const { data: dbNews } = await supabase
                     .from("news")
-                    .select("title, slug, source")
+                    .select("id, title, slug, source")
                     .order("created_at", { ascending: false })
-                    .limit(60);
+                    .limit(500);
 
                 if (dbNews) {
                     dbNewsList = dbNews;
-                    dbNews.forEach((n) => {
-                        if (n.title) existingTitles.push(n.title.toLowerCase().trim());
-                        if (n.slug) existingSlugs.push(n.slug.toLowerCase().trim());
-                    });
                 }
             } catch (err) {
                 console.warn("Gagal membaca riwayat berita untuk deduplikasi:", err);
             }
         }
 
-        // Helper cek apakah artikel atau topiknya sudah pernah diterbitkan sebelumnya
+        // Helper cek apakah artikel atau topiknya sudah pernah diterbitkan sebelumnya (menggunakan deduplikasi komprehensif)
         const isAlreadyPublished = (rawTitle: string): boolean => {
-            const cleanTitle = rawTitle.toLowerCase().trim();
-            const simplified = cleanTitle.replace(/[^a-z0-9]/g, "");
-            return existingTitles.some((t) => {
-                const simplifiedTarget = t.replace(/[^a-z0-9]/g, "");
-                if (simplified === simplifiedTarget) return true;
-                if (simplified.length > 15 && simplifiedTarget.includes(simplified.slice(0, 20))) return true;
-                if (simplifiedTarget.length > 15 && simplified.includes(simplifiedTarget.slice(0, 20))) return true;
-                return false;
-            });
+            if (!rawTitle) return false;
+            return isNewsAlreadyPublished(
+                { title: rawTitle, slug: generateSlug(rawTitle) },
+                dbNewsList
+            );
         };
 
         // 3. Rotasi Media Cerdas & Adil:

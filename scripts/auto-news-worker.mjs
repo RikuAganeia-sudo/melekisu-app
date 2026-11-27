@@ -31,12 +31,18 @@ async function triggerAutoUpload() {
 
         const data = await response.json();
         if (data.success) {
-            console.log(`[${timestamp}] ✅ Berita Berhasil Diterbitkan Otomatis!`);
-            console.log(`   - Sumber: ${data.source}`);
-            console.log(`   - Judul Asli: ${data.originalTitle}`);
-            if (data.publishedData?.news?.title) {
-                console.log(`   - Judul Terbit: ${data.publishedData.news.title}`);
-                console.log(`   - Kategori: ${data.publishedData.news.category}`);
+            if (data.skippedDeduplication) {
+                console.log(`[${timestamp}] ℹ️ Tidak ada rilis baru: ${data.message}`);
+            } else if (data.publishedData?.skippedDuplicate) {
+                console.log(`[${timestamp}] ℹ️ Duplikasi Dicegah: ${data.publishedData.message}`);
+            } else {
+                console.log(`[${timestamp}] ✅ Berita Berhasil Diterbitkan Otomatis!`);
+                console.log(`   - Sumber: ${data.source}`);
+                console.log(`   - Judul Asli: ${data.originalTitle}`);
+                if (data.publishedData?.news?.title) {
+                    console.log(`   - Judul Terbit: ${data.publishedData.news.title}`);
+                    console.log(`   - Kategori: ${data.publishedData.news.category}`);
+                }
             }
         } else {
             console.warn(`[${timestamp}] ⚠️ Respons gagal:`, data.message);

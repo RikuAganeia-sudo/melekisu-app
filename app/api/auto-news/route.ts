@@ -12,22 +12,16 @@ import {
     fetchExternalLiveNews, 
     LiveExternalNewsItem 
 } from "@/lib/externalNewsApi";
+import {
+    isNewsAlreadyPublished,
+    generateSlug
+} from "@/lib/newsDeduplication";
 
 function getSupabaseClient() {
     const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
     const key = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY;
     if (!url || !key) return null;
     return createClient(url, key);
-}
-
-function generateSlug(title: string): string {
-    return title
-        .toLowerCase()
-        .replace(/[^a-z0-9\s-]/g, "")
-        .trim()
-        .replace(/\s+/g, "-")
-        .replace(/-+/g, "-")
-        .slice(0, 80);
 }
 
 export async function POST(req: Request) {
@@ -89,6 +83,32 @@ export async function POST(req: Request) {
             : (selectedDataset?.keyPoints?.map((p) => `- ${p}`).join("\n") || "- Fokus pada transparansi, efisiensi anggaran, dan dampak langsung bagi masyarakat.");
 
         const initialCoverImage = selectedLiveItem?.imageUrl || selectedDataset?.defaultImage || getCategoryCoverImage(topicCategory);
+
+        const supabase = getSupabaseClient();
+
+        // Pre-check deduplikasi: Cek apakah topik/berita sumber ini sudah pernah diterbitkan di portal
+        if (autoPublish && supabase) {
+            try {
+                const { data: recentNews } = await supabase
+                    .from("news")
+                    .select("id, title, slug")
+                    .order("created_at", { ascending: false })
+                    .limit(500);
+
+                if (recentNews && isNewsAlreadyPublished({ title: topicTitle, slug: generateSlug(topicTitle) }, recentNews)) {
+                    console.log(`[AutoNews] Pre-check: Topik "${topicTitle}" sudah pernah terbit di portal. Melewati pembuatan duplikat.`);
+                    return NextResponse.json({
+                        success: true,
+                        published: false,
+                        skippedDuplicate: true,
+                        sourceName: topicSource,
+                        message: `Topik "${topicTitle}" sudah pernah diterbitkan di portal MelekIsu. Melewati penerbitan duplikat.`
+                    });
+                }
+            } catch (preCheckErr) {
+                console.warn("[AutoNews] Peringatan saat pre-check duplikasi:", preCheckErr);
+            }
+        }
 
         const apiKey = process.env.GEMINI_API_KEY || "";
         const hasApiKey = Boolean(apiKey && apiKey.length > 20 && apiKey !== "masukkan_api_key_gemini_anda_di_sini");
@@ -250,21 +270,32 @@ Buatkan artikel lengkap siap terbit ke portal publik MelekIsu.`;
 
         // 3. Simpan Otomatis ke Database Supabase jika autoPublish disetel true
         let supabaseSaved = false;
-        let finalSavedSlug = generatedArticle.slug;
-        const supabase = getSupabaseClient();
 
         if (autoPublish && supabase) {
             try {
-                // Pastikan slug unik
-                const { data: existingNews } = await supabase
+                // Ambil riwayat berita terbaru untuk memastikan judul & slug baru tidak duplikat
+                const { data: recentNews } = await supabase
                     .from("news")
-                    .select("slug")
-                    .eq("slug", generatedArticle.slug)
-                    .maybeSingle();
+                    .select("id, title, slug")
+                    .order("created_at", { ascending: false })
+                    .limit(500);
 
-                if (existingNews) {
-                    finalSavedSlug = `${generatedArticle.slug}-${Date.now().toString().slice(-4)}`;
-                    generatedArticle.slug = finalSavedSlug;
+                const isDuplicate = recentNews && isNewsAlreadyPublished(
+                    { title: generatedArticle.title, slug: generatedArticle.slug },
+                    recentNews
+                );
+
+                if (isDuplicate) {
+                    console.warn(`[AutoNews] Artikel "${generatedArticle.title}" (slug: ${generatedArticle.slug}) terdeteksi duplikat saat akan disimpan. Melewati publikasi.`);
+                    return NextResponse.json({
+                        success: true,
+                        published: false,
+                        skippedDuplicate: true,
+                        sourceType: selectedLiveItem ? "live_news_api" : (selectedDataset ? "dataset" : "custom"),
+                        sourceName: topicSource,
+                        news: generatedArticle,
+                        message: `Artikel "${generatedArticle.title}" sudah pernah diterbitkan sebelumnya di portal. Publikasi otomatis dilewati demi mencegah duplikasi.`
+                    });
                 }
 
                 const insertPayload = {
