@@ -280,7 +280,7 @@ export default function Navbar() {
               <Link
                 href="/masuk"
                 onClick={() => setPendingHref("/masuk")}
-                className="flex items-center gap-1.5 rounded-lg px-4 py-2 text-sm font-medium text-gray-600 transition-all duration-200 ease-out active:scale-95 hover:bg-gray-100"
+                className="flex items-center gap-1.5 rounded-full px-4 py-2 text-sm font-medium text-gray-600 transition-all duration-200 ease-out active:scale-95 hover:bg-gray-100"
               >
                 <LogIn className="h-4 w-4" />
                 Masuk
@@ -288,7 +288,7 @@ export default function Navbar() {
               <Link
                 href="/daftar"
                 onClick={() => setPendingHref("/daftar")}
-                className="flex items-center gap-1.5 rounded-lg bg-[#9B4000] px-4 py-2 text-sm font-medium text-white transition-all duration-200 ease-out active:scale-95 hover:bg-[#8C4A1E]"
+                className="flex items-center gap-1.5 rounded-full bg-[#9B4000] px-4 py-2 text-sm font-medium text-white transition-all duration-200 ease-out active:scale-95 hover:bg-[#8C4A1E]"
               >
                 <User className="h-4 w-4" />
                 Daftar
