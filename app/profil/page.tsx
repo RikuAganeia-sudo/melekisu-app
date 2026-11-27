@@ -168,12 +168,14 @@ export default function UserProfilePage() {
                 let likedSlugs: string[] = [];
 
                 try {
+                    // Bersihkan key global lama agar tidak mencemari akun baru
+                    if (localStorage.getItem("melekisu_liked_articles_all")) {
+                        localStorage.removeItem("melekisu_liked_articles_all");
+                    }
+
                     const rawLikes = localStorage.getItem(storageKey);
                     if (rawLikes) {
                         likedSlugs = JSON.parse(rawLikes);
-                    } else {
-                        const rawAll = localStorage.getItem("melekisu_liked_articles_all");
-                        if (rawAll) likedSlugs = JSON.parse(rawAll);
                     }
                 } catch {}
 

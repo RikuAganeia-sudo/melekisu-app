@@ -299,7 +299,6 @@ function BeritaContent() {
 
         try {
             localStorage.setItem(storageKey, JSON.stringify(likedList));
-            localStorage.setItem("melekisu_liked_articles_all", JSON.stringify(likedList));
             window.dispatchEvent(new Event("storage"));
         } catch {}
 

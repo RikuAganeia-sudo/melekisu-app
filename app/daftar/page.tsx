@@ -76,6 +76,13 @@ export default function RegisterPage() {
                     joinedDate: new Date().toLocaleDateString("id-ID", { day: 'numeric', month: 'long', year: 'numeric' }),
                 };
                 localStorage.setItem("current_user", JSON.stringify(userProfile));
+
+                // Pastikan akun baru mulai dengan 0 apresiasi (tidak mewarisi riwayat like guest atau global)
+                const userKey = email.trim() || data.user.id;
+                localStorage.setItem(`melekisu_liked_articles_${userKey}`, JSON.stringify([]));
+                localStorage.removeItem("melekisu_liked_articles_all");
+                localStorage.removeItem("melekisu_liked_articles_guest");
+
                 window.dispatchEvent(new Event("storage"));
             }
 
