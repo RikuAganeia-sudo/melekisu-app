@@ -273,18 +273,25 @@ export default function HomePage() {
     if (!featuredNews) return;
 
     const syncInteractiveData = async () => {
-      const activeUser = localStorage.getItem("current_user");
+      const supabase = createClient();
+      // Validasi sesi aktif dari Supabase langsung agar tidak tertipu cache lokal
+      const { data: { user: authUser } } = await supabase.auth.getUser();
       let parsedUser = null;
-      if (activeUser) {
-        try {
-          parsedUser = JSON.parse(activeUser);
-          setCurrentUser(parsedUser);
-        } catch {
-          setCurrentUser(null);
+
+      if (authUser) {
+        const activeUser = localStorage.getItem("current_user");
+        if (activeUser) {
+          try {
+            parsedUser = JSON.parse(activeUser);
+          } catch {
+            parsedUser = null;
+          }
         }
       } else {
-        setCurrentUser(null);
+        localStorage.removeItem("current_user");
       }
+
+      setCurrentUser(parsedUser);
 
       const userKey = parsedUser
         ? parsedUser.emailOrPhone || parsedUser.id || "guest"

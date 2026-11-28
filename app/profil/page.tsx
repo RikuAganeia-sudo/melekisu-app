@@ -74,15 +74,11 @@ export default function UserProfilePage() {
                     setUser(currentProfile);
                     localStorage.setItem("current_user", JSON.stringify(currentProfile));
                 } else {
-                    // 2. Fallback cek ke localStorage jika sesi ada
-                    const activeUser = localStorage.getItem("current_user");
-                    if (activeUser) {
-                        currentProfile = JSON.parse(activeUser);
-                        setUser(currentProfile);
-                    } else {
-                        router.push("/masuk");
-                        return;
-                    }
+                    // Jika tidak ada user Supabase aktif, hapus cache dan arahkan ke masuk
+                    localStorage.removeItem("current_user");
+                    setUser(null);
+                    router.push("/masuk");
+                    return;
                 }
 
                 if (!currentProfile) return;

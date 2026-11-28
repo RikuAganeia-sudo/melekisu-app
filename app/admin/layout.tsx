@@ -1,187 +1,96 @@
 "use client";
 
-import { useEffect, useState } from "react";
-import { useRouter, usePathname } from "next/navigation";
+import { useEffect } from "react";
 import Link from "next/link";
-import { 
-    LayoutDashboard, 
-    Newspaper, 
-    MessageSquareCheck, 
-    ShieldCheck, 
-    LogOut, 
-    ExternalLink,
-    ChevronRight,
-    Menu,
-    X
-} from "lucide-react";
+import { ShieldAlert, Lock, ArrowLeft, AlertTriangle } from "lucide-react";
 
-interface AdminSession {
-    id: string;
-    email: string;
-    name: string;
-    role: string;
-}
-
-export default function AdminLayout({ children }: { children: React.ReactNode }) {
-    const router = useRouter();
-    const pathname = usePathname();
-    const [admin, setAdmin] = useState<AdminSession | null>(null);
-    const [isChecking, setIsChecking] = useState(true);
-    const [isSidebarOpen, setIsSidebarOpen] = useState(false);
-
-    const isLoginPage = pathname === "/admin/login";
-
+export default function AdminLayout({ children }: { children?: React.ReactNode }) {
     useEffect(() => {
-        if (isLoginPage) {
-            setIsChecking(false);
-            return;
+        // Hapus paksa semua sesi admin yang tersisa di browser
+        try {
+            sessionStorage.removeItem("melekisu_admin_session");
+            localStorage.removeItem("melekisu_admin_session");
+        } catch {
+            // Abaikan jika storage dibatasi
         }
-
-        // Bersihkan sisa sesi permanen lama jika ada
-        localStorage.removeItem("melekisu_admin_session");
-
-        // Gunakan sessionStorage agar otomatis hilang saat tab atau browser ditutup
-        const rawSession = sessionStorage.getItem("melekisu_admin_session");
-        if (!rawSession) {
-            router.replace("/admin/login");
-        } else {
-            try {
-                setAdmin(JSON.parse(rawSession));
-            } catch {
-                sessionStorage.removeItem("melekisu_admin_session");
-                router.replace("/admin/login");
-            }
-            setIsChecking(false);
-        }
-    }, [router, isLoginPage]);
-
-    // Jika di halaman login admin, langsung render halaman login tanpa sidebar atau loading screen
-    if (isLoginPage) {
-        return <>{children}</>;
-    }
-
-    if (isChecking) {
-        return (
-            <div className="min-h-screen bg-[#1E120A] flex items-center justify-center text-[#FDB659]">
-                <div className="w-8 h-8 border-3 border-[#FDB659] border-t-transparent rounded-full animate-spin"></div>
-            </div>
-        );
-    }
-
-    const handleLogout = () => {
-        sessionStorage.removeItem("melekisu_admin_session");
-        localStorage.removeItem("melekisu_admin_session");
-        router.replace("/admin/login");
-    };
+    }, []);
 
     return (
-        <div className="min-h-screen bg-[#FDF8F5] text-[#28180C] flex flex-col lg:flex-row">
-            {/* Mobile Topbar */}
-            <div className="lg:hidden bg-[#1E120A] text-white px-5 py-3.5 flex items-center justify-between border-b border-[#3D2516]">
-                <div className="flex items-center gap-2">
-                    <img src="/images/logo-white.png" alt="Logo" className="w-7 h-7 object-contain" />
-                    <span className="font-extrabold text-sm tracking-tight text-white">
-                        Melek<span className="text-[#FDB659]">Isu</span> Admin
-                    </span>
+        <div className="min-h-screen bg-[#140B06] text-[#FFF8F5] flex flex-col justify-between selection:bg-red-500/30">
+            {/* Header Lockdown */}
+            <header className="py-6 px-8 flex items-center justify-between border-b border-red-900/40 bg-red-950/20">
+                <div className="flex items-center gap-3">
+                    <img
+                        src="/images/logo-white.png"
+                        alt="Logo MelekIsu"
+                        className="w-8 h-8 object-contain"
+                    />
+                    <div className="flex flex-col">
+                        <span className="font-extrabold text-base tracking-tight text-white">
+                            Melek<span className="text-[#FDB659]">Isu</span>
+                        </span>
+                        <span className="text-[10px] text-red-400 font-bold uppercase tracking-wider">
+                            Status: Emergency Security Lockdown
+                        </span>
+                    </div>
                 </div>
-                <button
-                    onClick={() => setIsSidebarOpen(!isSidebarOpen)}
-                    className="p-1.5 rounded-lg bg-[#28180C] text-[#FDB659] cursor-pointer"
-                >
-                    {isSidebarOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
-                </button>
-            </div>
 
-            {/* Sidebar Desktop */}
-            <aside className={`
-                fixed inset-y-0 left-0 z-50 w-64 bg-[#1E120A] text-[#FFF8F5] p-6 flex flex-col justify-between border-r border-[#3D2516]
-                transition-transform duration-300 lg:static lg:translate-x-0
-                ${isSidebarOpen ? "translate-x-0" : "-translate-x-full lg:translate-x-0"}
-            `}>
-                <div className="space-y-8">
-                    {/* Brand */}
-                    <div className="flex items-center gap-3">
-                        <img
-                            src="/images/logo-white.png"
-                            alt="Logo MelekIsu"
-                            className="w-9 h-9 object-contain"
-                        />
-                        <div className="flex flex-col">
-                            <span className="font-extrabold text-base tracking-tight text-white">
-                                Melek<span className="text-[#FDB659]">Isu</span>
-                            </span>
-                            <span className="text-[10px] text-[#A68877] font-bold uppercase tracking-wider">
-                                Dashboard Redaksi
-                            </span>
-                        </div>
+                <Link
+                    href="/"
+                    className="inline-flex items-center gap-2 text-xs text-[#DEC0B3] hover:text-white font-semibold transition-colors bg-white/5 hover:bg-white/10 px-3 py-1.5 rounded-lg border border-white/10"
+                >
+                    <ArrowLeft className="w-3.5 h-3.5" /> Kembali ke Web Utama
+                </Link>
+            </header>
+
+            {/* Konten Pemblokiran Akses Admin */}
+            <main className="flex-1 flex items-center justify-center p-6">
+                <div className="w-full max-w-lg bg-[#1E100A] border-2 border-red-600/60 rounded-3xl p-8 sm:p-10 shadow-2xl relative overflow-hidden text-center">
+                    <div className="absolute top-0 right-0 w-48 h-48 bg-red-600/10 rounded-full blur-3xl pointer-events-none"></div>
+                    <div className="absolute bottom-0 left-0 w-48 h-48 bg-[#9B4000]/10 rounded-full blur-3xl pointer-events-none"></div>
+
+                    <div className="w-16 h-16 rounded-2xl bg-red-600/20 border border-red-500/40 text-red-400 mx-auto flex items-center justify-center mb-6 shadow-lg shadow-red-900/30">
+                        <ShieldAlert className="w-8 h-8 text-red-400" />
                     </div>
 
-                    {/* Navigasi Panel */}
-                    <nav className="space-y-1.5 text-xs font-bold">
-                        <Link
-                            href="/admin/dashboard"
-                            className="flex items-center gap-3 px-4 py-3 rounded-xl bg-gradient-to-r from-[#9B4000] to-[#B34B00] text-white shadow-md"
-                        >
-                            <LayoutDashboard className="w-4 h-4" />
-                            <span>Ikhtisar & Statistik</span>
-                        </Link>
+                    <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-bold bg-red-500/10 text-red-400 border border-red-500/20 mb-4">
+                        <Lock className="w-3.5 h-3.5" /> AKSES ADMIN DIBLOKIR SEMENTARA
+                    </div>
 
-                        <a
-                            href="#kelola-berita"
-                            className="flex items-center gap-3 px-4 py-3 rounded-xl text-[#DEC0B3] hover:text-white hover:bg-[#28180C] transition-colors"
-                        >
-                            <Newspaper className="w-4 h-4" />
-                            <span>Kelola Berita</span>
-                        </a>
+                    <h1 className="text-2xl sm:text-3xl font-black text-white tracking-tight mb-3">
+                        Portal Admin Dinonaktifkan
+                    </h1>
 
-                        <a
-                            href="#moderasi-komentar"
-                            className="flex items-center gap-3 px-4 py-3 rounded-xl text-[#DEC0B3] hover:text-white hover:bg-[#28180C] transition-colors"
-                        >
-                            <MessageSquareCheck className="w-4 h-4" />
-                            <span>Moderasi Masukan</span>
-                        </a>
+                    <p className="text-sm text-[#DEC0B3] leading-relaxed mb-6">
+                        Demi keselamatan data dan pencegahan terhadap indikasi serangan siber yang terdeteksi, seluruh portal manajemen admin telah dikunci secara otomatis. Seluruh sesi aktif telah diputus.
+                    </p>
 
+                    <div className="p-4 rounded-2xl bg-red-950/30 border border-red-800/40 text-left text-xs text-red-200/90 space-y-2 mb-6">
+                        <div className="flex items-center gap-2 font-bold text-red-300">
+                            <AlertTriangle className="w-4 h-4 shrink-0" />
+                            <span>Tindakan Pengamanan Aktif:</span>
+                        </div>
+                        <ul className="list-disc list-inside space-y-1 text-red-200/80 pl-1">
+                            <li>Endpoint otentikasi admin ditolak (<code className="text-red-300">403 Forbidden</code>).</li>
+                            <li>Penyimpanan sesi lokal dan browser dihapus seketika.</li>
+                            <li>Akses ke dashboard dan kurasi berita diisolasi.</li>
+                        </ul>
+                    </div>
+
+                    <div className="flex flex-col sm:flex-row gap-3 justify-center">
                         <Link
                             href="/"
-                            target="_blank"
-                            className="flex items-center justify-between px-4 py-3 rounded-xl text-[#DEC0B3] hover:text-white hover:bg-[#28180C] transition-colors pt-4 border-t border-[#3D2516]/60 mt-4"
+                            className="px-6 py-3 rounded-xl bg-white/10 hover:bg-white/15 text-white font-bold text-xs tracking-wide transition-all border border-white/10"
                         >
-                            <div className="flex items-center gap-2.5">
-                                <ExternalLink className="w-4 h-4 text-[#FDB659]" />
-                                <span>Lihat Web Warga</span>
-                            </div>
-                            <ChevronRight className="w-3.5 h-3.5 text-[#8B7266]" />
+                            Kembali ke Halaman Beranda
                         </Link>
-                    </nav>
-                </div>
-
-                {/* Profil Admin & Logout */}
-                <div className="pt-6 border-t border-[#3D2516] flex flex-col gap-3">
-                    <div className="flex items-center gap-3">
-                        <div className="w-9 h-9 rounded-xl bg-[#9B4000] text-white flex items-center justify-center font-bold text-xs shrink-0 shadow-xs">
-                            <ShieldCheck className="w-5 h-5 text-[#FDB659]" />
-                        </div>
-                        <div className="flex flex-col min-w-0">
-                            <span className="text-xs font-bold text-white truncate">{admin?.name || "Administrator"}</span>
-                            <span className="text-[10px] text-[#A68877] truncate">{admin?.email || "admin@melekisu.id"}</span>
-                        </div>
                     </div>
-
-                    <button
-                        onClick={handleLogout}
-                        className="w-full mt-1 py-2 px-3 bg-[#28180C] hover:bg-red-950/50 hover:text-red-300 text-[#DEC0B3] text-xs font-bold rounded-xl transition-colors flex items-center justify-center gap-2 cursor-pointer"
-                    >
-                        <LogOut className="w-3.5 h-3.5" />
-                        <span>Keluar Sesi</span>
-                    </button>
                 </div>
-            </aside>
-
-            {/* Konten Halaman */}
-            <main className="flex-1 p-6 sm:p-10 max-w-7xl">
-                {children}
             </main>
+
+            <footer className="py-4 px-8 text-center text-xs text-[#8B7266] border-t border-red-900/20">
+                Sistem Keamanan MelekIsu • Mode Darurat Diaktifkan
+            </footer>
         </div>
     );
 }

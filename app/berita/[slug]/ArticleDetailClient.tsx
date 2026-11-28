@@ -99,34 +99,48 @@ export default function ArticleDetailClient({ slug }: { slug: string }) {
             const list = await getCommentsForSlug(articleData.slug);
             setComments(list);
 
-            const activeUser = localStorage.getItem("current_user");
-            if (activeUser) {
-                try {
-                    const parsedUser = JSON.parse(activeUser);
-                    setCurrentUser(parsedUser);
+            const supabase = createClient();
+            const { data: { user: authUser } } = await supabase.auth.getUser();
+            let parsedUser = null;
 
-                    const alreadyCommented = list.some(
-                        (c: any) =>
-                            c.status === "Terverifikasi" &&
-                            !isTextViolating(c.text).violated &&
-                            ((parsedUser.emailOrPhone && c.authorEmail === parsedUser.emailOrPhone) ||
-                            (parsedUser.fullName && c.author === parsedUser.fullName))
-                    );
-                    setUserSubmissionCount(alreadyCommented ? 1 : 0);
-
-                    // Cek status like artikel oleh pengguna ini
-                    const userKey = parsedUser.emailOrPhone || parsedUser.id || "guest";
-                    const storageKey = `melekisu_liked_articles_${userKey}`;
-                    const rawLikes = localStorage.getItem(storageKey);
-                    if (rawLikes) {
-                        try {
-                            const listLikes: string[] = JSON.parse(rawLikes);
-                            setIsLiked(listLikes.includes(articleData.slug));
-                        } catch {}
+            if (authUser) {
+                const activeUser = localStorage.getItem("current_user");
+                if (activeUser) {
+                    try {
+                        parsedUser = JSON.parse(activeUser);
+                    } catch {
+                        parsedUser = null;
                     }
-                } catch {
-                    setCurrentUser(null);
                 }
+            } else {
+                localStorage.removeItem("current_user");
+            }
+
+            setCurrentUser(parsedUser);
+
+            if (parsedUser) {
+                const alreadyCommented = list.some(
+                    (c: any) =>
+                        c.status === "Terverifikasi" &&
+                        !isTextViolating(c.text).violated &&
+                        ((parsedUser.emailOrPhone && c.authorEmail === parsedUser.emailOrPhone) ||
+                        (parsedUser.fullName && c.author === parsedUser.fullName))
+                );
+                setUserSubmissionCount(alreadyCommented ? 1 : 0);
+
+                // Cek status like artikel oleh pengguna ini
+                const userKey = parsedUser.emailOrPhone || parsedUser.id || "guest";
+                const storageKey = `melekisu_liked_articles_${userKey}`;
+                const rawLikes = localStorage.getItem(storageKey);
+                if (rawLikes) {
+                    try {
+                        const listLikes: string[] = JSON.parse(rawLikes);
+                        setIsLiked(listLikes.includes(articleData.slug));
+                    } catch {}
+                }
+            } else {
+                setUserSubmissionCount(0);
+                setIsLiked(false);
             }
         };
 

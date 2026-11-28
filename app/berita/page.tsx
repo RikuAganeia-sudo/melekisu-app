@@ -191,19 +191,27 @@ function BeritaContent() {
     // Sinkronisasi data berita dinamis & user
     useEffect(() => {
         const syncData = async () => {
-            const activeUser = localStorage.getItem("current_user");
-            if (activeUser) {
-                try {
-                    setCurrentUser(JSON.parse(activeUser));
-                } catch {
-                    setCurrentUser(null);
+            const supabase = createClient();
+            const { data: { user: authUser } } = await supabase.auth.getUser();
+            let parsedUser = null;
+
+            if (authUser) {
+                const activeUser = localStorage.getItem("current_user");
+                if (activeUser) {
+                    try {
+                        parsedUser = JSON.parse(activeUser);
+                    } catch {
+                        parsedUser = null;
+                    }
                 }
             } else {
-                setCurrentUser(null);
+                localStorage.removeItem("current_user");
             }
 
+            setCurrentUser(parsedUser);
+
             const allNews = await getCombinedNews();
-            const userKey = activeUser ? (JSON.parse(activeUser).emailOrPhone || JSON.parse(activeUser).id || "guest") : "guest";
+            const userKey = parsedUser ? (parsedUser.emailOrPhone || parsedUser.id || "guest") : "guest";
             let likedList: string[] = [];
             try {
                 const raw = localStorage.getItem(`melekisu_liked_articles_${userKey}`);

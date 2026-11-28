@@ -121,16 +121,8 @@ export default function Navbar() {
         setCurrentUser(profile);
         localStorage.setItem("current_user", JSON.stringify(profile));
       } else {
-        const activeUser = localStorage.getItem("current_user");
-        if (activeUser) {
-          try {
-            setCurrentUser(JSON.parse(activeUser));
-          } catch {
-            setCurrentUser(null);
-          }
-        } else {
-          setCurrentUser(null);
-        }
+        localStorage.removeItem("current_user");
+        setCurrentUser(null);
       }
     });
 
