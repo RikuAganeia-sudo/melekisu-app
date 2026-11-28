@@ -9,17 +9,29 @@ export async function GET(req: Request) {
     try {
         const url = new URL(req.url);
         
-        // 1. Validasi opsional CRON_SECRET jika dikonfigurasi di environment
+        // 1. Validasi Keamanan Wajib CRON_SECRET: Cegah Bot Menerbitkan Berita Liar
         const authHeader = req.headers.get("authorization");
+        const querySecret = url.searchParams.get("secret");
         const cronSecret = process.env.CRON_SECRET;
-        if (cronSecret && authHeader !== `Bearer ${cronSecret}`) {
-            const querySecret = url.searchParams.get("secret");
-            if (querySecret !== cronSecret) {
-                return NextResponse.json(
-                    { success: false, message: "Akses ditolak: CRON_SECRET tidak cocok." },
-                    { status: 401 }
-                );
-            }
+
+        // Jika mode penguncian darurat aktif, tolak seluruh otomatisasi
+        if (process.env.ADMIN_ACCESS_BLOCKED === "true") {
+            return NextResponse.json(
+                { success: false, message: "Akses diblokir: Sistem sedang dalam Emergency Security Lockdown." },
+                { status: 403 }
+            );
+        }
+
+        // Jika CRON_SECRET belum disetel atau kredensial yang dikirim salah, tolak tegas (401 Unauthorized)
+        const isAuthorized = cronSecret && (authHeader === `Bearer ${cronSecret}` || querySecret === cronSecret);
+        if (!isAuthorized) {
+            return NextResponse.json(
+                { 
+                    success: false, 
+                    message: "Akses ditolak: Endpoint ini diproteksi. Sertakan CRON_SECRET yang valid untuk menjalankan worker." 
+                },
+                { status: 401 }
+            );
         }
 
         // 2. Ambil riwayat berita dan sumber media terakhir untuk rotasi yang adil dan beragam

@@ -26,6 +26,29 @@ function getSupabaseClient() {
 
 export async function POST(req: Request) {
     try {
+        // Proteksi Darurat: Tolak jika status lockdown aktif
+        if (process.env.ADMIN_ACCESS_BLOCKED === "true") {
+            return NextResponse.json(
+                { success: false, message: "Akses diblokir: Sistem sedang dalam Emergency Security Lockdown." },
+                { status: 403 }
+            );
+        }
+
+        // Validasi Otorisasi: Wajib sertakan CRON_SECRET atau Header Internal
+        const authHeader = req.headers.get("authorization");
+        const cronSecret = process.env.CRON_SECRET;
+        const isAuthorized = cronSecret && authHeader === `Bearer ${cronSecret}`;
+        
+        if (!isAuthorized) {
+            return NextResponse.json(
+                { 
+                    success: false, 
+                    message: "Akses ditolak: Publikasi berita otomatis membutuhkan otorisasi kredensial resmi." 
+                },
+                { status: 401 }
+            );
+        }
+
         let body: any = {};
         try {
             body = await req.json();

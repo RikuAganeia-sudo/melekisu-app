@@ -16,10 +16,12 @@ async function triggerAutoUpload() {
     console.log(`[${timestamp}] 🚀 Memulai penarikan & publikasi berita otomatis...`);
 
     try {
+        const cronSecret = process.env.CRON_SECRET || "SECURE_CRON_TOKEN_7728a49c9f0b1e32d847";
         const response = await fetch(`${APP_URL}/api/cron/auto-news`, {
             method: "GET",
             headers: {
-                "User-Agent": "MelekIsu-AutoWorker/1.0"
+                "User-Agent": "MelekIsu-AutoWorker/1.0",
+                "Authorization": `Bearer ${cronSecret}`
             }
         });
 

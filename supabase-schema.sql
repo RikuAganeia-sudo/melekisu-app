@@ -34,31 +34,27 @@ CREATE TABLE IF NOT EXISTS public.comments (
 ALTER TABLE public.news ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.comments ENABLE ROW LEVEL SECURITY;
 
--- 4. Buat Kebijakan Akses (Policies)
--- Siapa pun (publik/tamu) dapat membaca berita
+-- 4. Buat Kebijakan Akses (Policies) - AMAN
+-- Siapa pun (publik/tamu) hanya dapat MEMBACA berita
 DROP POLICY IF EXISTS "Public can read news" ON public.news;
 CREATE POLICY "Public can read news" ON public.news
     FOR SELECT USING (true);
 
--- Siapa pun dapat menambah/mengedit berita (atau khusus admin)
+-- Cabut akses modifikasi berita dari publik / anonim
 DROP POLICY IF EXISTS "Enable news management" ON public.news;
-CREATE POLICY "Enable news management" ON public.news
-    FOR ALL USING (true);
 
 -- Siapa pun dapat membaca komentar
 DROP POLICY IF EXISTS "Public can read comments" ON public.comments;
 CREATE POLICY "Public can read comments" ON public.comments
     FOR SELECT USING (true);
 
--- Siapa pun yang login dapat menyisipkan komentar
+-- Pengunjung dapat menyisipkan komentar (dimoderasi)
 DROP POLICY IF EXISTS "Anyone can insert comments" ON public.comments;
 CREATE POLICY "Anyone can insert comments" ON public.comments
     FOR INSERT WITH CHECK (true);
 
--- Admin dapat mengupdate status komentar (verifikasi) dan menghapusnya
+-- Cabut akses publik untuk moderasi/hapus komentar
 DROP POLICY IF EXISTS "Enable comment moderation" ON public.comments;
-CREATE POLICY "Enable comment moderation" ON public.comments
-    FOR ALL USING (true);
 
 -- 5. Masukkan Data Awal (Seeding Berita)
 INSERT INTO public.news (id, title, slug, category, source, excerpt, content, date, duration, image, likes)
